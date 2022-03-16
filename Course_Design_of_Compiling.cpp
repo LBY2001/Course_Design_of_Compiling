@@ -12,23 +12,31 @@ using namespace std;
 //单词的类型枚举，参考资料P32页
 typedef enum
 {
-	ENDFILE, ERROR,
-	PROGRAM, PROCEDURE, TYPE, VAR, IF,
-	THEN, ELSE, FI, WHILE, DO, ENDWH,
-	BEGIN, END1, READ, WRITE, ARRAY, OF,
-	RECORD, RETURN1,
-	INTEGER, CHAR1,
-	ID, INTC, CHARC,
-	ASSIGN, EQ, LT, PLUS, MINUS,
-	TIMES, OVER, LPAREN, RPAREN, DOT,
-	COLON, SEMI, COMMA, LMIDPAREN, RMIDPAREN,
+	/* 簿记单词符号 */
+	ENDFILE1,	ERROR1,
+
+	/* 保留字 */
+	PROGRAM,	PROCEDURE,	TYPE,	VAR,	IF,
+	THEN,		ELSE,		FI,		WHILE,	DO,		ENDWH,
+	BEGIN,		END1,		READ,	WRITE,	ARRAY,	OF,
+	RECORD,		RETURN1,
+
+	INTEGER,	CHAR1,
+	
+	/* 多字符单词符号 */
+	ID,			INTC,		CHARC,
+
+	/*特殊符号 */
+	ASSIGN,		EQ,			LT,		PLUS,		MINUS,
+	TIMES,		OVER,		LPAREN, RPAREN,		DOT,
+	COLON,		SEMI,		COMMA,	LMIDPAREN,	RMIDPAREN,
 	UNDERANGE
 }LexType;
 
 //类型哈希表
 unordered_map<int, string> ha = 
 { 
-	{0, "ENDFILE"}, {1, "ERROR"}, {2, "PROGRAM"}, {3,"PROCEDURE"},
+	{0, "ENDFILE1"}, {1, "ERROR1"}, {2, "PROGRAM"}, {3,"PROCEDURE"},
 	{4, "TYPE"}, {5, "VAR"}, {6, "IF"}, {7, "THEN"},
 	{8, "ELSE"}, {9, "FI"}, {10, "WHILE"}, {11, "DO"},
 	{12, "ENDWH"}, {13, "BEGIN"}, {14, "END1"},{15, "READ"},
@@ -204,16 +212,16 @@ void LexicalAnalyzer::getTokenList()
 				currentString += c;
 				c = fgetc(f);
 			}
-			bool isError = false;			//判断字符串是否都由数字组成,否则为错误单词
+			bool isERROR1 = false;			//判断字符串是否都由数字组成,否则为错误单词
 			for (int i = 0; i < currentString.length(); i++)
 			{
 				if (isLetter(currentString[i]))
-					isError = true;
+					isERROR1 = true;
 			}
 
 			//数字夹杂字母
-			if (isError) {
-				Token* tempToken = new Token(lineShow, Word(currentString, ERROR));
+			if (isERROR1) {
+				Token* tempToken = new Token(lineShow, Word(currentString, ERROR1));
 				TokenList.push_back(tempToken);
 			}
 
@@ -284,7 +292,7 @@ void LexicalAnalyzer::getTokenList()
 				}
 				else
 				{
-					tempToken = new Token(lineShow, Word(currentString, ERROR));
+					tempToken = new Token(lineShow, Word(currentString, ERROR1));
 					TokenList.push_back(tempToken);
 				}
 			}
@@ -314,7 +322,7 @@ void LexicalAnalyzer::getTokenList()
 				}
 				else
 				{
-					tempToken = new Token(lineShow, Word(currentString, ERROR));
+					tempToken = new Token(lineShow, Word(currentString, ERROR1));
 					TokenList.push_back(tempToken);
 				}
 			}
@@ -349,7 +357,7 @@ void LexicalAnalyzer::getTokenList()
 					tokenType = COMMA;
 				}
 				else {
-					tokenType = ERROR;
+					tokenType = ERROR1;
 				}
 
 				tempToken = new Token(lineShow, Word(temp, tokenType));
@@ -362,13 +370,13 @@ void LexicalAnalyzer::getTokenList()
 		else
 		{
 			string currentString = "" + c;
-			Token* tempToken = new Token(lineShow, Word(currentString, ERROR));
+			Token* tempToken = new Token(lineShow, Word(currentString, ERROR1));
 			TokenList.push_back(tempToken);
 			c = fgetc(f);
 		}
 	}
 	string temp(1, c);
-	Token* tempToken = new Token(lineShow, Word(temp, ENDFILE));
+	Token* tempToken = new Token(lineShow, Word(temp, ENDFILE1));
 	TokenList.push_back(tempToken);
 }
 
