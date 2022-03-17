@@ -35,24 +35,8 @@ typedef enum
 	UNDERANGE
 }LexType;
 
-//类型哈希表
-unordered_map<int, string> ha =
-{
-	{0, "ENDFILE1"},	{1, "ERROR1"},		{2, "PROGRAM"},		{3,"PROCEDURE"},
-	{4, "TYPE"},		{5, "VAR"},			{6, "IF"},			{7, "THEN"},
-	{8, "ELSE"},		{9, "FI"},			{10, "WHILE"},		{11, "DO"},
-	{12, "ENDWH"},		{13, "BEGIN"},		{14, "END1"},		{15, "READ"},
-	{16, "WRITE"},		{11, "ARRAY"},		{12, "OF"},			{13, "RECORD"},
-	{20, "RETURN1"},	{21, "INTEGER"},	{22, "CHAR1"},		{23, "ID"},
-	{24, "INTC"},		{25, "CHARC"},		{26, "ASSIGN"},		{27, "EQ"},
-	{28, "LT"},			{29, "PLUS"},		{30, "MINUS"},		{31, "TIMES"},
-	{32, "OVER"},		{33, "LPAREN"},		{34, "RPAREN"},		{35, "DOT"},
-	{36, "COLON"},		{37, "SEMI"},		{38, "COMMA"},		{39, "LMIDPAREN"},
-	{40, "RMIDPAREN"},	{41, "UNDERANGE"}
-};
-
 //单词的语义信息
-static struct Word
+struct Word
 {
 	string Sem;		//语义信息
 	LexType Lex;	//词法信息
@@ -62,14 +46,7 @@ static struct Word
 		Lex = lex;
 	}
 	Word() {}
-}keyWords[21] =
-{
-	{"program",PROGRAM},{"type",TYPE},{"var",VAR},
-	{"procedure",PROCEDURE},{"begin",BEGIN},{"end",END1},{"array",ARRAY},
-	{"of",OF},{"record",RECORD},{"if",IF},{"then",THEN},{"else",ELSE},{"fi",FI},
-	{"while",WHILE},{"do",DO},{"endwh",ENDWH},{"read",READ},{"write",WRITE},
-	{"return",RETURN1},{"integer",INTEGER},{"char",CHAR1}
-};//保留字
+};
 
 //SNL的Token结构
 struct Token 
