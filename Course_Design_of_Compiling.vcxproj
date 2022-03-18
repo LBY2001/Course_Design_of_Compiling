@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="Parsing_RD.cpp" />
+    <ClCompile Include="the_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalyzer.h" />

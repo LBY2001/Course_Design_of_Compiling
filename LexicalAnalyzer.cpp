@@ -17,10 +17,10 @@ LexicalAnalyzer::~LexicalAnalyzer(){}
 Word keyWords[21] =
 {
 	{"program",PROGRAM},{"type",TYPE},{"var",VAR},
-	{"procedure",PROCEDURE},{"begin",BEGIN},{"end",END1},{"array",ARRAY},
+	{"procedure",PROCEDURE},{"begin",BEGIN},{"end",END},{"array",ARRAY},
 	{"of",OF},{"record",RECORD},{"if",IF},{"then",THEN},{"else",ELSE},{"fi",FI},
 	{"while",WHILE},{"do",DO},{"endwh",ENDWH},{"read",READ},{"write",WRITE},
-	{"return",RETURN1},{"integer",INTEGER},{"char",CHAR1}
+	{"return",RETURN},{"integer",INTEGER},{"char",CHAR1}
 };//保留字
 
 //类型哈希表
@@ -29,9 +29,9 @@ unordered_map<int, string> ha =
 	{0, "ENDFILE1"},	{1, "ERROR1"},		{2, "PROGRAM"},		{3,"PROCEDURE"},
 	{4, "TYPE"},		{5, "VAR"},			{6, "IF"},			{7, "THEN"},
 	{8, "ELSE"},		{9, "FI"},			{10, "WHILE"},		{11, "DO"},
-	{12, "ENDWH"},		{13, "BEGIN"},		{14, "END1"},		{15, "READ"},
+	{12, "ENDWH"},		{13, "BEGIN"},		{14, "END"},		{15, "READ"},
 	{16, "WRITE"},		{11, "ARRAY"},		{12, "OF"},			{13, "RECORD"},
-	{20, "RETURN1"},	{21, "INTEGER"},	{22, "CHAR1"},		{23, "ID"},
+	{20, "RETURN"},		{21, "INTEGER"},	{22, "CHAR1"},		{23, "ID"},
 	{24, "INTC"},		{25, "CHARC"},		{26, "ASSIGN"},		{27, "EQ"},
 	{28, "LT"},			{29, "PLUS"},		{30, "MINUS"},		{31, "TIMES"},
 	{32, "OVER"},		{33, "LPAREN"},		{34, "RPAREN"},		{35, "DOT"},
@@ -230,7 +230,7 @@ void LexicalAnalyzer::getTokenList()
 				}
 				else
 				{
-					tempToken = new Token(lineShow, Word(currentString, ERROR1));
+					tempToken = new Token(lineShow, Word(currentString, DOT));
 					TokenList.push_back(tempToken);
 				}
 			}
@@ -316,30 +316,4 @@ void LexicalAnalyzer::getTokenList()
 	string temp(1, c);
 	Token* tempToken = new Token(lineShow, Word(temp, ENDFILE1));
 	TokenList.push_back(tempToken);
-}
-
-int main()
-{
-	LexicalAnalyzer lexicalanalyzer;
-	lexicalanalyzer.getTokenList();
-	int count = lexicalanalyzer.TokenList.size();
-	//for (int i = 0; i < count; i++)
-	//{
-	//	cout<< "第"   << lexicalanalyzer.TokenList[i]->lineShow
-	//		<< "行 <" << ha.at(lexicalanalyzer.TokenList[i]->word.Lex)
-	//		<< ","    << lexicalanalyzer.TokenList[i]->word.Sem
-	//		<< ">"    << endl;
-	//}
-
-	//ofstream file;
-	//file.open("tokenList.txt");
-	//for (int i = 0; i < count; i++)
-	//{
-	//	file << lexicalanalyzer.TokenList[i]->lineShow
-	//		<< ' ' << lexicalanalyzer.TokenList[i]->word.Lex
-	//		<< ' ' << lexicalanalyzer.TokenList[i]->word.Sem
-	//		<< '\n';
-	//}
-
-	cout << "运行成功" << endl;
 }

@@ -1,7 +1,8 @@
 program  p
 type  t = integer;
-var   t    v1;
+var   integer    v1,v2;
 char   v2;
+
 begin
 read(v1);
 v1:= v1 + 10;

@@ -60,48 +60,55 @@ struct symbtable;
 typedef struct treeNode
 
 {
-	struct treeNode* child[3];		/* 子节点指针	*/
-	struct treeNode* sibling;		/* 兄弟节点指针	*/
-	int lineno;						/* 源代码行号	*/
-	NodeKind nodekind;				/* 节点类型		*/
+	struct treeNode* child[3];		//子节点
+	struct treeNode* sibling;		//兄弟节点
+	int lineno;						//源程序行号
+
+	NodeKind nodekind;				/*记录语法树节点类型，取值 ProK, PheadK, TypeK, VarK,
+									  ProcDecK, StmLK, DecK, StmtK, ExpK, 为语法树节点类型*/
+
 	union
 	{
-		DecKind  dec;
-		StmtKind stmt;
-		ExpKind  exp;
-	} kind;                       /* 具体类型     */
+		DecKind  dec;				/*记录语法树节点的声明类型，当 nodekind = DecK 时有效，取
+									  ArrayK,CharK,lntegerK,RecordK,IdK, 为语法树节点声明类型*/
+		StmtKind stmt;				/*记录语法树节点的语句类型，当 nodekind = StmtK 时有效，取值 IfK, 
+									  WhileK,AssignK,ReadK, WriteK, CallK,RetumK, 为语法树节点语句类型*/
+		ExpKind  exp;				/*记录语法树节点的表达式类型，当 nodekind=ExpK 时有效，取值 OpK, 
+									  ConstK,IdK, 为语法树节点表达式类型*/
 
-	int idnum;                    /* 相同类型的变量个数 */
+	} kind;                         /* 具体类型     */
 
-	string name[10];            /* 标识符的名称  */
-
-	struct symbtable* table[10];  /* 与标志符对应的符号表地址，在语义分析阶段填入*/
+	int idnum;                      //记录一个节点中的标志符的个数
+	string name[10];				//节点中标志符的名字
+	struct symbtable* table[10];	/*记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。
+									  语义分析填入？*/
 
 	struct
 	{
 		struct
 		{
-			int low;              /* 数组下界     */
-			int up;               /* 数组上界     */
-			DecKind   childtype;  /* 数组的子类型 */
-		}ArrayAttr;               /* 数组属性     */
+			int low;				// 数组下界     
+			int up;					// 数组上界     
+			DecKind   childtype;	// 数组的子类型 
+		}ArrayAttr;					// 数组属性     
 
 		struct
 		{
-			ParamType  paramt;     /* 过程的参数类型 */
-		}ProcAttr;                 /* 过程属性       */
+			ParamType  paramt;		/* 过程的参数类型值为枚举类型valparamtype 或者 varparamtype 
+									   表示过程参数是值参还是变参*/
+		}ProcAttr;					// 过程属性       
 
 		struct
 		{
-			LexType op;           /* 表达式的操作符*/
-			int val;		      /* 表达式的值	   */
-			VarKind  varkind;     /* 变量的类别    */
-			ExpType type;         /* 用于类型检查  */
-		}ExpAttr;	              /* 表达式属性    */
+			LexType op;				// 表达式的操作符
+			int val;				// 表达式的值
+			VarKind  varkind;		// 变量的类别    
+			ExpType type;			// 用于类型检查  
+		}ExpAttr;					// 表达式属性 
 
-		string type_name;       /* 类型名是标识符 */
+		string type_name;			//记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。
 
-	} attr;                       /* 属性	        */
+	} attr;							//记录语法树节点其他属性
 }TreeNode;
 
 class RecursiveDescentParsing
@@ -110,17 +117,74 @@ public:
 	void initial();							//全局变量初始化
 	void ReadNextToken();					//读文件
 	void syntaxError(string errorMessage);	//输出语法错误
-	void match(LexType lt);
+	void match(LexType lt);					//匹配
+	void fileClose();
 
+	//1
 	TreeNode* parse(void);
 	TreeNode* Program(void);
 	TreeNode* ProgramHead(void);
 	TreeNode* DeclarePart(void);
 	TreeNode* TypeDec(void);
+	TreeNode* TypeDeclaration(void);
 	TreeNode* TypeDecList(void);
 	TreeNode* TypeDecMore(void);
 	void TypeId(TreeNode* t);
 	void TypeName(TreeNode* t);
-	void BaseType(TreeNode* t);
 
+	//11
+	void BaseType(TreeNode* t);
+	void StructureType(TreeNode* t);
+	void ArrayType(TreeNode* t);
+	void RecType(TreeNode* t);
+	TreeNode* FieldDecList(void);
+	TreeNode* FieldDecMore(void);
+	void IdList(TreeNode* t);
+	void IdMore(TreeNode* t);
+	TreeNode* VarDec(void);
+	TreeNode* VarDeclaration(void);
+
+	//21
+	TreeNode* VarDecList(void);
+	TreeNode* VarDecMore(void);
+	void VarIdList(TreeNode* t);
+	void VarIdMore(TreeNode* t);
+	TreeNode* ProcDec(void);
+	TreeNode* ProcDeclaration(void);
+	void ParamList(TreeNode* t);
+	TreeNode* ParamDecList(void);
+	TreeNode* ParamMore(void);
+	TreeNode* Param(void);
+
+	//31
+	void FormList(TreeNode* t);
+	void FidMore(TreeNode* t);
+	TreeNode* ProcDecPart(void);
+	TreeNode* ProcBody(void);
+	TreeNode* ProgramBody(void);
+	TreeNode* StmList(void);
+	TreeNode* StmMore(void);
+	TreeNode* Stm(void);
+	TreeNode* AssCall(void);
+	TreeNode* AssignmentRest(void);
+
+	//41
+	TreeNode* ConditionalStm(void);
+	TreeNode* LoopStm(void);
+	TreeNode* InputStm(void);
+	TreeNode* OutputStm(void);
+	TreeNode* ReturnStm(void);
+	TreeNode* CallStmRest(void);
+	TreeNode* ActParamList(void);
+	TreeNode* ActParamMore(void);
+	TreeNode* Exp(void);
+	TreeNode* Simple_exp(void);
+
+	//51
+	TreeNode* Term(void);
+	TreeNode* Factor(void);
+	TreeNode* Variable(void);
+	void VariMore(TreeNode* t);
+	TreeNode* Fieldvar(void);
+	void FieldvarMore(TreeNode* t);
 };
