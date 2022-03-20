@@ -1,0 +1,29 @@
+             ProK  
+                 PheadK  p  
+                 TypeK  
+line: 2               Deck  Integer  t    
+                 VarK  
+line: 3               Deck  Integer  v1  v2    
+line: 4               Deck  Chark  v2    
+                 StmLk  
+line: 7               Stmtk  Read  v1  
+line: 8               Stmtk  Assign  
+line: 8                   ExpK  Vari  Id  v1  
+line: 8                   ExpK  Op  +  
+line: 8                       ExpK  Vari  Id  v1  
+line: 9               Stmtk  Write  
+line: 9                   ExpK  Vari  Id  v1  
+line: 10              Stmtk  Read  v1  
+line: 11              Stmtk  Assign  
+line: 11                  ExpK  Vari  Id  v1  
+line: 11                  ExpK  Op  +  
+line: 11                      ExpK  Vari  Id  v1  
+line: 12              Stmtk  Write  
+line: 12                  ExpK  Vari  Id  v1  
+line: 13              Stmtk  Read  v1  
+line: 14              Stmtk  Assign  
+line: 14                  ExpK  Vari  Id  v1  
+line: 14                  ExpK  Op  +  
+line: 14                      ExpK  Vari  Id  v1  
+line: 15              Stmtk  Write  
+line: 15                  ExpK  Vari  Id  v1  

@@ -20,6 +20,25 @@ int line0;			//在代码中的行数
 string temp_name;	//临时存变量名
 ofstream textfile;	//输出文件
 FILE* fp;			//读入文件
+int indentation;	//缩进
+ofstream treeFile;	//树形文件
+FILE* listing;
+
+//类型哈希表
+unordered_map<int, string> ha2 =
+{
+	{0, "ENDFILE1"},	{1, "ERROR1"},		{2, "PROGRAM"},		{3,"PROCEDURE"},
+	{4, "TYPE"},		{5, "VAR"},			{6, "IF"},			{7, "THEN"},
+	{8, "ELSE"},		{9, "FI"},			{10, "WHILE"},		{11, "DO"},
+	{12, "ENDWH"},		{13, "BEGIN"},		{14, "END"},		{15, "READ"},
+	{16, "WRITE"},		{11, "ARRAY"},		{12, "OF"},			{13, "RECORD"},
+	{20, "RETURN"},		{21, "INTEGER"},	{22, "CHAR1"},		{23, "ID"},
+	{24, "INTC"},		{25, "CHARC"},		{26, "ASSIGN"},		{27, "EQ"},
+	{28, "LT"},			{29, "PLUS"},		{30, "MINUS"},		{31, "TIMES"},
+	{32, "OVER"},		{33, "LPAREN"},		{34, "RPAREN"},		{35, "DOT"},
+	{36, "COLON"},		{37, "SEMI"},		{38, "COMMA"},		{39, "LMIDPAREN"},
+	{40, "RMIDPAREN"},	{41, "UNDERANGE"}
+};
 
 void RecursiveDescentParsing::initial()
 {
@@ -28,7 +47,9 @@ void RecursiveDescentParsing::initial()
 	line0 = 0;
 	//fopen_s(&flisting, "parseError.txt", "w");
 	textfile.open("parseError.txt");
+	treeFile.open("SyntaxTree.txt");
 	fopen_s(&fp, "tokenList.txt", "rb");
+	indentation = 0;
 }
 
 void RecursiveDescentParsing::ReadNextToken()
@@ -54,7 +75,7 @@ void RecursiveDescentParsing::ReadNextToken()
 
 void RecursiveDescentParsing::syntaxError(string errorMessage)
 {
-	textfile << "Syntax error, line " << token.lineShow << " : " << errorMessage << endl;
+	textfile << "语法错误, line " << token.lineShow << " : " << errorMessage << endl;
 	//fprintf(flisting, "Syntax error, line %d : %s\n\n", token.lineShow, errorMessage);
 	Error = true;
 }
@@ -63,13 +84,16 @@ void RecursiveDescentParsing::match(LexType lt)
 {
 	if (token.word.Lex == lt)
 	{
-		ReadNextToken();
+		if (lt != DOT)
+			ReadNextToken();
 		line0 = token.lineShow;
 	}
 	else
 	{
-		syntaxError("符号错误，不匹配");
-		ReadNextToken();
+		string tempError;
+		tempError = "符号\"" + token.word.Sem + "\"错误，也许缺失符号\"" + ha2.at(lt) + "\"";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -77,6 +101,7 @@ void RecursiveDescentParsing::fileClose()
 {
 	fclose(fp);
 	textfile.close();
+	treeFile.close();
 }
 
 TreeNode* RecursiveDescentParsing::parse(void)
@@ -101,7 +126,7 @@ TreeNode* RecursiveDescentParsing::Program(void)
 	TreeNode* root = new TreeNode;
 	if (root == NULL)
 	{
-		fprintf(flisting, "内存溢出：第 0 行\n");
+		syntaxError("内存溢出");
 		Error = true;
 		exit(0);
 	}
@@ -128,7 +153,8 @@ TreeNode* RecursiveDescentParsing::Program(void)
 			syntaxError("缺少程序头");
 		if (q != NULL) root->child[1] = q;
 		if (s != NULL) root->child[2] = s;
-		else syntaxError("缺少程序头");
+		else 
+			syntaxError("缺少程序体");
 	}
 	match(DOT);
 
@@ -270,8 +296,9 @@ TreeNode* RecursiveDescentParsing::TypeDec(void)
 
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“TYPE” / “VAR” / “PROCEDURE” / “BEGIN”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -327,8 +354,9 @@ TreeNode* RecursiveDescentParsing::TypeDecMore(void)
 		t = TypeDecList();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“变量名” / “VAR” / “PROCEDURE” / “BEGIN”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -365,8 +393,9 @@ void RecursiveDescentParsing::TypeName(TreeNode* t)
 		}
 		else
 		{
-			ReadNextToken();
-			syntaxError("意外符号");
+			string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“变量名” / “INTEGER” / “CHAR1” / “ARRAY” / “RECORD”";
+			syntaxError(tempError);
+			//ReadNextToken();
 		}
 	}
 }
@@ -388,8 +417,9 @@ void RecursiveDescentParsing::BaseType(TreeNode* t)
 		}
 		else
 		{
-			ReadNextToken();
-			syntaxError("意外符号");
+			string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“INTEGER” / “CHAR1”";
+			syntaxError(tempError);
+			//ReadNextToken();
 		}
 	}
 }
@@ -408,8 +438,9 @@ void RecursiveDescentParsing::StructureType(TreeNode* t)
 		}
 		else
 		{
-			ReadNextToken();
-			syntaxError("意外符号");
+			string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“ARRAY” / “RECCORD”";
+			syntaxError(tempError);
+			//ReadNextToken();
 		}
 	}
 }
@@ -488,8 +519,9 @@ TreeNode* RecursiveDescentParsing::FieldDecList(void)
 		}
 		else
 		{
-			ReadNextToken();
-			syntaxError("意外符号");
+			string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“INTEGER” / “CHAR1” / “ARRAY”";
+			syntaxError(tempError);
+			//ReadNextToken();
 		}
 		t->sibling = p;
 	}
@@ -505,8 +537,9 @@ TreeNode* RecursiveDescentParsing::FieldDecMore(void)
 		t = FieldDecList();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“END” / “INTEGER” / “CHAR1” / “ARRAY”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -536,8 +569,9 @@ void RecursiveDescentParsing::IdMore(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“ ；”/ “，”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -550,8 +584,9 @@ TreeNode* RecursiveDescentParsing::VarDec(void)
 		t = VarDeclaration();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“PROCEDURE” / “BEGIN” / “VAR”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -607,8 +642,9 @@ TreeNode* RecursiveDescentParsing::VarDecMore(void)
 		t = VarDecList();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“PROCEDURE” / “BEGIN” / “INTEGER” / “CHAR1” / “ARRAY” / “RECORD” / “变量名”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -623,8 +659,8 @@ void RecursiveDescentParsing::VarIdList(TreeNode* t)
 	}
 	else
 	{
-		syntaxError("a varid is expected here!");
-		ReadNextToken();
+		syntaxError("变量名缺失");
+		//ReadNextToken();
 	}
 	VarIdMore(t);
 }
@@ -640,8 +676,9 @@ void RecursiveDescentParsing::VarIdMore(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“；” / “，”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -654,8 +691,9 @@ TreeNode* RecursiveDescentParsing::ProcDec(void)
 		t = ProcDeclaration();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“PROCEDURE” / “BEGIN”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -712,8 +750,9 @@ void RecursiveDescentParsing::ParamList(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -742,8 +781,9 @@ TreeNode* RecursiveDescentParsing::ParamMore(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“；” / “）”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -771,8 +811,8 @@ TreeNode* RecursiveDescentParsing::Param(void)
 	if (t != NULL)
 	{
 		t->lineno = line0;
-		if (token.word.Lex == INTEGER || token.word.Lex == INTEGER || token.word.Lex == INTEGER || 
-			token.word.Lex == INTEGER || token.word.Lex == INTEGER )
+		if (token.word.Lex == INTEGER || token.word.Lex == CHAR1 || token.word.Lex == ARRAY ||
+			token.word.Lex == RECORD || token.word.Lex == ID)
 		{
 			t->attr.ProcAttr.paramt = valparamType;
 			TypeName(t);
@@ -787,8 +827,9 @@ TreeNode* RecursiveDescentParsing::Param(void)
 		}
 		else
 		{
-			ReadNextToken();
-			syntaxError("意外符号");
+			string tempError = "意外符号\"" + token.word.Sem + "\"";
+			syntaxError(tempError);
+			//ReadNextToken();
 		}
 	}
 	return t;
@@ -818,8 +859,9 @@ void RecursiveDescentParsing::FidMore(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“；”/ “）” / “，”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -966,8 +1008,9 @@ TreeNode* RecursiveDescentParsing::StmMore(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“；”/ “END” / “ENDWH”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -996,8 +1039,9 @@ TreeNode* RecursiveDescentParsing::Stm(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -1012,8 +1056,9 @@ TreeNode* RecursiveDescentParsing::AssCall(void)
 		t = CallStmRest();
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“:=” / “（”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -1308,8 +1353,9 @@ TreeNode* RecursiveDescentParsing::ActParamList(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“变量名” / “）” / “整形”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -1326,8 +1372,9 @@ TreeNode* RecursiveDescentParsing::ActParamMore(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“）”/ “，”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -1493,8 +1540,9 @@ TreeNode* RecursiveDescentParsing::Factor(void)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"" + "，或许缺少符号“变量名” /“（” / “整形”";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 	return t;
 }
@@ -1560,8 +1608,9 @@ void RecursiveDescentParsing::VariMore(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
@@ -1615,9 +1664,277 @@ void RecursiveDescentParsing::FieldvarMore(TreeNode* t)
 	}
 	else
 	{
-		ReadNextToken();
-		syntaxError("意外符号");
+		string tempError = "意外符号\"" + token.word.Sem + "\"";
+		syntaxError(tempError);
+		//ReadNextToken();
 	}
 }
 
+void RecursiveDescentParsing::printTree(TreeNode* tree)
+{
+	//fopen_s(&listing, "treeFile.txt", "w");
+	if (Error == false)
+	{
+		indentation += 4;		//缩进加4
 
+		while (tree != NULL)
+		{
+			//打印行号
+			if (tree->lineno == 0)
+				for (int i = 0; i < 9; i++)
+					treeFile << ' ';
+			else
+				//每10行一标记
+				switch (tree->lineno / 10)
+				{
+					case 0:
+						treeFile << "line: " << tree->lineno;
+						for (int i = 0; i < 3; i++)
+							treeFile << " ";
+						break;
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+					case 6:
+					case 7:
+					case 8:
+					case 9:
+						treeFile << "line: " << tree->lineno;
+						for (int i = 0; i < 2; i++)
+							treeFile << " ";
+						break;
+					default:
+						treeFile << "line: " << tree->lineno;
+						for (int i = 0; i < 1; i++)
+							treeFile << " ";
+				}
+
+			//缩进
+			for (int i = 0; i < indentation; i++)
+				treeFile << " ";
+
+			//判断nodeKind
+			switch (tree->nodekind)
+			{
+				case ProK:
+					treeFile << "ProK  "; 
+					break;
+
+				case PheadK:
+				{
+					treeFile << "PheadK  ";
+					treeFile << tree->name[0] << "  ";
+				}
+					break;
+
+				case DecK:
+				{  
+					treeFile << "Deck  ";
+					if (tree->attr.ProcAttr.paramt == varparamType)
+						treeFile << "var param:  ";
+					if (tree->attr.ProcAttr.paramt == valparamType)
+						treeFile << "value param:  ";
+
+					switch (tree->kind.dec)
+					{
+						case  ArrayK:
+						{
+							treeFile << "ArrayK  ";
+							treeFile << tree->attr.ArrayAttr.up << "  ";
+							treeFile << tree->attr.ArrayAttr.low << "  ";
+							if (tree->attr.ArrayAttr.childtype == CharK)
+								treeFile << "Chark  ";
+							else if (tree->attr.ArrayAttr.childtype == IntegerK)
+								treeFile << "Integer  ";
+						}; 
+						break;
+						case  CharK:
+							treeFile << "Chark  ";
+							break;
+						case  IntegerK:
+							treeFile << "Integer  ";
+							break;
+						case  RecordK:
+							treeFile << "RecordK  ";
+							break;
+						case  IdK:
+							treeFile << "IdK  ";
+							treeFile << tree->attr.type_name << "  ";
+							break;
+						default:
+							treeFile << "error1!  ";
+							Error = true;
+					};
+					if (tree->idnum != 0)
+						for (int i = 0; i <= (tree->idnum); i++)
+							treeFile << tree->name[i] << "  ";
+					else
+					{
+						treeFile << "wrong!no var!\n";
+						Error = true;
+					}
+				} 
+					break;
+
+				case TypeK:
+					treeFile << "TypeK  ";
+					break;
+
+				case VarK:
+					treeFile << "VarK  ";
+					//if (tree->table[0] != NULL)
+					//	fprintf(listing, "%d  %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
+					break;
+
+				case ProcDecK:
+					treeFile << "ProcDecK  ";
+					treeFile << tree->name[0] << "  ";
+					//if (tree->table[0] != NULL)
+					//	fprintf(listing, "%d %d %d  ", tree->table[0]->attrIR.More.ProcAttr.mOff, tree->table[0]->attrIR.More.ProcAttr.nOff, tree->table[0]->attrIR.More.ProcAttr.level);
+					break;
+
+				case StmLK:
+					treeFile << "StmLk  ";
+					break;
+
+				case StmtK:
+				{ 
+					treeFile << "Stmtk  ";
+					switch (tree->kind.stmt)
+					{
+						case IfK:
+							treeFile << "If  ";; break;
+						case WhileK:
+							treeFile << "While  ";break;
+
+						case AssignK:
+							treeFile << "Assign  "; break;
+
+						case ReadK:
+							treeFile << "Read  ";
+							treeFile << tree->name[0] << "  ";
+							//if (tree->table[0] != NULL)
+							//	fprintf(listing, "%d   %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
+							break;
+
+						case WriteK:
+							treeFile << "Write  "; break;
+
+						case CallK:
+							treeFile << "Call  "; break;
+							treeFile << tree->name[0] << "  ";
+							break;
+
+						case ReturnK:
+							treeFile << "Return  "; break;
+
+						default:
+							treeFile << "error2!";
+							Error = true;
+					}
+				}; 
+					break;
+
+				case ExpK:
+				{ 
+					treeFile << "ExpK  ";
+					switch (tree->kind.exp)
+					{
+						case OpK:
+						{ 
+							treeFile << "Op  ";
+							switch (tree->attr.ExpAttr.op)
+							{
+								case EQ:   treeFile << "=  "; break;
+								case LT:   treeFile << "<  "; break;
+								case PLUS: treeFile << "+  "; break;
+								case MINUS:treeFile << "-  "; break;
+								case TIMES:treeFile << "*  "; break;
+								case OVER: treeFile << "/  "; break;
+								default:
+									treeFile << "error2!";
+									Error = true;
+							}
+
+							if (tree->attr.ExpAttr.varkind == ArrayMembV)
+							{
+								treeFile << "ArrayMember  ";
+								treeFile << tree->name[0] << "  ";
+							}
+						}; 
+							break;
+
+						case ConstK:
+							treeFile << "Const  ";
+							switch (tree->attr.ExpAttr.varkind)
+							{
+								case IdV:
+									treeFile << "Id  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								case FieldMembV:
+									treeFile << "FieldMember  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								case ArrayMembV:
+									treeFile << "ArrayMember  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								default:
+									treeFile << "var type error!";
+									Error = true;
+							}
+							treeFile << tree->attr.ExpAttr.val << "  ";
+							break;
+
+						case VariK:
+							treeFile << "Vari  ";
+							switch (tree->attr.ExpAttr.varkind)
+							{
+								case IdV:
+									treeFile << "Id  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								case FieldMembV:
+									treeFile << "FieldMember  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								case ArrayMembV:
+									treeFile << "ArrayMember  ";
+									treeFile << tree->name[0] << "  ";
+									break;
+								default:
+									treeFile << "var type error!";
+									Error = true;
+							}
+							//if (tree->table[0] != NULL)
+							//	fprintf(listing, "%d   %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
+							break;
+
+						default:
+							treeFile << "error4!";
+							Error = true;
+					}
+				}; 
+					break;
+
+				default:
+					treeFile << "error5!";
+					Error = true;
+			}
+
+			treeFile << "\n";
+
+			for (int i = 0; i < 3; i++)
+				printTree(tree->child[i]);
+
+			tree = tree->sibling;
+		}
+		indentation -= 4;		//缩进减4
+	}
+	else
+		treeFile << "存在语法错误，语法树生成失败!";
+	//fclose(listing);
+}

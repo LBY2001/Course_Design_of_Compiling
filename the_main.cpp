@@ -39,6 +39,7 @@ int main()
 	rd.initial();
 	TreeNode* root;
 	root = rd.parse();
+	rd.printTree(root);
 	rd.fileClose();
 	cout << "运行成功" << endl;
 }

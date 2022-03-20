@@ -80,8 +80,8 @@ typedef struct treeNode
 
 	int idnum;                      //记录一个节点中的标志符的个数
 	string name[10];				//节点中标志符的名字
-	struct symbtable* table[10];	/*记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。
-									  语义分析填入？*/
+	struct symbtable* table[10];	
+	/*记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。语义分析填入？*/
 
 	struct
 	{
@@ -119,6 +119,7 @@ public:
 	void syntaxError(string errorMessage);	//输出语法错误
 	void match(LexType lt);					//匹配
 	void fileClose();
+	void printTree(TreeNode* tree);
 
 	//1
 	TreeNode* parse(void);
