@@ -9,6 +9,7 @@
 #include<sstream>
 #include<stdio.h>
 #include<stdlib.h>
+#include <graphics.h>
 #include"Parsing_RD.h"
 
 FILE* fin;
@@ -23,6 +24,16 @@ FILE* fp;			//读入文件
 int indentation;	//缩进
 ofstream treeFile;	//树形文件
 FILE* listing;
+
+//语法树可视化使用变量
+int circleX, circleY, circleR;	//语法树图形化节点坐标x, y, 半径r
+TCHAR temp[100];
+int lastX;
+int lastY;
+NodeKind lastNode;
+bool lastIsDeck;
+int procNum;			//代码中声明的数量
+int stmlkNum;			//代码段数量
 
 //类型哈希表
 unordered_map<int, string> ha2 =
@@ -49,7 +60,9 @@ void RecursiveDescentParsing::initial()
 	textfile.open("parseError.txt");
 	treeFile.open("SyntaxTree.txt");
 	fopen_s(&fp, "tokenList.txt", "rb");
+	procNum = 0;
 	indentation = 0;
+	stmlkNum = 2;	//值为2，但代码段为1。在函数中减为1
 }
 
 void RecursiveDescentParsing::ReadNextToken()
@@ -1719,12 +1732,29 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 			switch (tree->nodekind)
 			{
 				case ProK:
+				{
 					treeFile << "ProK  "; 
-					break;
+					setbkcolor(RGB(255, 255, 255));
+					setcolor(RGB(0,0,0));
+					settextcolor(RGB(0, 0, 0));
 
+					_stprintf_s(temp, _T("Prok"));
+					circleX = 650, circleY = 50, circleR = 40;
+					circle(circleX, circleY, circleR); // 画圆
+					outtextxy(circleX - 20, circleY - 10, temp);// 文字
+				}
+					break;
+					
 				case PheadK:
 				{
 					treeFile << "PheadK  ";
+
+					_stprintf_s(temp, _T("PheadK"));
+					circleX = 50, circleY = 150, circleR = 40;
+					circle(circleX, circleY, circleR); // 画圆
+					outtextxy(circleX - 20, circleY - 10, temp);// 文字
+					line(circleX, circleY - 40, 610 , 50);
+
 					treeFile << tree->name[0] << "  ";
 				}
 					break;
@@ -1748,20 +1778,255 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 								treeFile << "Chark  ";
 							else if (tree->attr.ArrayAttr.childtype == IntegerK)
 								treeFile << "Integer  ";
+
+							if (lastNode == VarK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: ArrK"));
+								circleX = 250, circleY = 250, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 450, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == VarK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: ArrK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: ArrK"));
+								circleX = 50, circleY = 350, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 250, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: ArrK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
 						}; 
 						break;
+
 						case  CharK:
+						{
 							treeFile << "Chark  ";
+
+							if (lastNode == VarK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: CharK"));
+								circleX = 250, circleY = 250, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 34, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 450, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == VarK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: CharK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 34, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: CharK"));
+								circleX = 50, circleY = 350, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 34, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 250, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: CharK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 34, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+						}
 							break;
 						case  IntegerK:
+						{
 							treeFile << "Integer  ";
+
+							if (lastNode == VarK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: IntK"));
+								circleX = 250, circleY = 250, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 450, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == VarK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: IntK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: IntK"));
+								circleX = 50, circleY = 350, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 250, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: IntK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+						}
 							break;
+
 						case  RecordK:
+						{
 							treeFile << "RecordK  ";
+
+							if (lastNode == VarK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: ReK"));
+								circleX = 250, circleY = 250, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 450, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == VarK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: ReK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: ReK"));
+								circleX = 50, circleY = 350, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 250, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: ReK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+						}
 							break;
 						case  IdK:
+						{
 							treeFile << "IdK  ";
 							treeFile << tree->attr.type_name << "  ";
+
+							if (lastNode == VarK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: IdK"));
+								circleX = 250, circleY = 250, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 450, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == VarK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: IdK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == false)
+							{
+								_stprintf_s(temp, _T("Dec: IdK"));
+								circleX = 50, circleY = 350, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX, circleY - 40, 250, 190);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+							else if (lastNode == TypeK && lastIsDeck == true)
+							{
+								_stprintf_s(temp, _T("Dec: IdK"));
+								circleX = lastX + 60, circleY = lastY, circleR = 40;
+								circle(circleX, circleY, circleR); // 画圆
+								outtextxy(circleX - 30, circleY - 10, temp);// 文字
+								line(circleX - 40, circleY, lastX, lastY);
+								lastX = circleX + 40;
+								lastY = circleY;
+								lastIsDeck = true;
+							}
+						}
 							break;
 						default:
 							treeFile << "error1!  ";
@@ -1779,56 +2044,185 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 					break;
 
 				case TypeK:
+				{
 					treeFile << "TypeK  ";
+
+					_stprintf_s(temp, _T("TypeK"));
+					circleX = 250, circleY = 150, circleR = 40;
+					circle(circleX, circleY, circleR); // 画圆
+					outtextxy(circleX - 20, circleY - 10, temp);// 文字
+					line(circleX, circleY - 40, 610, 50);
+					lastNode = tree->nodekind;
+					lastIsDeck = false;
+				}
 					break;
 
 				case VarK:
+				{
 					treeFile << "VarK  ";
 					//if (tree->table[0] != NULL)
 					//	fprintf(listing, "%d  %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
+					
+					_stprintf_s(temp, _T("VarK"));
+					circleX = 450, circleY = 150, circleR = 40;
+					circle(circleX, circleY, circleR); // 画圆
+					outtextxy(circleX - 20, circleY - 10, temp);// 文字
+					line(circleX - 40, circleY, 290, 150);
+					lastNode = tree->nodekind;
+					lastIsDeck = false;
+				}					
 					break;
 
 				case ProcDecK:
+				{
 					treeFile << "ProcDecK  ";
 					treeFile << tree->name[0] << "  ";
 					//if (tree->table[0] != NULL)
 					//	fprintf(listing, "%d %d %d  ", tree->table[0]->attrIR.More.ProcAttr.mOff, tree->table[0]->attrIR.More.ProcAttr.nOff, tree->table[0]->attrIR.More.ProcAttr.level);
+					
+					stmlkNum++;
+					//代码中有声明，则添加PORC节点
+					if (procNum == 0)
+					{
+						_stprintf_s(temp, _T("ProcK"));
+						circleX = 650, circleY = 150, circleR = 40;
+						circle(circleX, circleY, circleR); // 画圆
+						outtextxy(circleX - 25, circleY - 10, temp);// 文字
+						line(circleX - 40, circleY, 490, 150);
+						lastNode = tree->nodekind;
+						lastIsDeck = false;
+						procNum++;
+
+						_stprintf_s(temp, _T("Dec: Proc"));
+						circleX = 250, circleY = 550, circleR = 40;
+						circle(circleX, circleY, circleR); // 画圆
+						outtextxy(circleX - 30, circleY - 10, temp);// 文字
+						_stprintf_s(temp, _T("%s"), tree->name[0].c_str());
+						outtextxy(circleX - 10, circleY + 7, temp);
+						line(circleX, circleY - 40, 650, 190);
+						lastX = circleX + 40;
+						lastY = circleY;
+						lastIsDeck = true;
+					}
+					else
+					{
+						_stprintf_s(temp, _T("Dec: Proc"));
+						circleX = lastX + 60, circleY = lastY, circleR = 40;
+						circle(circleX, circleY, circleR); // 画圆
+						outtextxy(circleX - 30, circleY - 10, temp);// 文字
+						_stprintf_s(temp, _T("%s"), tree->name[0].c_str());
+						outtextxy(circleX - 10, circleY + 7, temp);
+						line(circleX - 40, circleY, lastX, lastY);
+						lastX = circleX + 40;
+						lastY = circleY;
+						lastIsDeck = true;
+					}
+
+				}					
 					break;
 
 				case StmLK:
+				{
 					treeFile << "StmLk  ";
+					if (stmlkNum != 1)
+						stmlkNum--;
+					if (stmlkNum == 1)
+					{
+						_stprintf_s(temp, _T("StmLk"));
+						circleX = 850, circleY = 150, circleR = 40;
+						circle(circleX, circleY, circleR); // 画圆
+						outtextxy(circleX - 20, circleY - 10, temp);// 文字
+						line(circleX, circleY - 40, 690, 50);
+						lastNode = tree->nodekind;
+						lastIsDeck = false;
+					}
+				}
 					break;
 
 				case StmtK:
 				{ 
 					treeFile << "Stmtk  ";
+
+					if (stmlkNum == 1)
+					{
+						if (lastIsDeck == false)
+						{
+							_stprintf_s(temp, _T("Stmtk:"));
+							circleX = 450, circleY = 450, circleR = 40;
+							circle(circleX, circleY, circleR); // 画圆
+							outtextxy(circleX - 20, circleY - 15, temp);// 文字
+							line(circleX, circleY - 40, 850, 190);
+							lastX = circleX + 40;
+							lastY = circleY;
+							lastIsDeck = true;
+						}
+						else if (lastIsDeck == true)
+						{
+							_stprintf_s(temp, _T("Stmtk:"));
+							circleX = lastX + 60, circleY = lastY, circleR = 40;
+							circle(circleX, circleY, circleR); // 画圆
+							outtextxy(circleX - 20, circleY - 15, temp);// 文字
+							line(circleX - 40, circleY, lastX, lastY);
+							lastX = circleX + 40;
+							lastY = circleY;
+							lastIsDeck = true;
+						}
+					}
+
 					switch (tree->kind.stmt)
 					{
 						case IfK:
-							treeFile << "If  ";; break;
+							treeFile << "If  ";
+							_stprintf_s(temp, _T("If"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
+							break;
+
 						case WhileK:
-							treeFile << "While  ";break;
+							treeFile << "While  ";
+							_stprintf_s(temp, _T("While"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
+							break;
 
 						case AssignK:
-							treeFile << "Assign  "; break;
+							treeFile << "Assign  "; 
+							_stprintf_s(temp, _T("Assign"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
+							break;
 
 						case ReadK:
 							treeFile << "Read  ";
 							treeFile << tree->name[0] << "  ";
+							_stprintf_s(temp, _T("Read"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
 							//if (tree->table[0] != NULL)
 							//	fprintf(listing, "%d   %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
 							break;
 
 						case WriteK:
-							treeFile << "Write  "; break;
+							treeFile << "Write  ";
+							_stprintf_s(temp, _T("Write"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
+							break;
 
 						case CallK:
 							treeFile << "Call  "; break;
 							treeFile << tree->name[0] << "  ";
+							_stprintf_s(temp, _T("Call"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
 							break;
 
 						case ReturnK:
-							treeFile << "Return  "; break;
+							treeFile << "Return  "; 
+							_stprintf_s(temp, _T("Return"));
+							if (stmlkNum == 1)
+								outtextxy(circleX - 15, circleY + 7, temp);
+							break;
 
 						default:
 							treeFile << "error2!";

@@ -7,6 +7,7 @@
 #include<vector>
 #include <iomanip>
 #include <sstream>
+#include <graphics.h>
 #include"LexicalAnalyzer.h"
 #include"Parsing_RD.h"
 using namespace std;
@@ -39,7 +40,19 @@ int main()
 	rd.initial();
 	TreeNode* root;
 	root = rd.parse();
-	rd.printTree(root);
+
+	{
+		initgraph(1300, 640);   // 创建图形界面
+		for (int y = 0; y <= 640; y++)
+		{
+			setcolor(RGB(255, 255, 255));
+			line(0, y, 1300, y);
+		}						//白色背景
+		rd.printTree(root);
+		saveimage(_T("treeFile.bmp"));
+	}
+
+	closegraph();
 	rd.fileClose();
 	cout << "运行成功" << endl;
 }
