@@ -69,9 +69,9 @@ typedef  enum { intTy, charTy, arrayTy, recordTy, boolTy }TypeKind;
 //域类型单元结构定义
 typedef struct fieldchain
 {
-	char   id[10];              /*变量名*/
-	int    off;                 /*所在记录中的偏移*/
-	struct typeIR* UnitType; /*域中成员的类型*/
+	string id;					//变量名
+	int    off;                 //所在记录中的偏移
+	struct typeIR* UnitType;	//域中成员的类型
 	struct fieldchain* Next;
 }fieldChain;
 
@@ -97,11 +97,13 @@ typedef struct typeIR
 class SemanticAnalysis
 {
 public:
+	//其他函数
 	void initial();				//全局变量初始化
 	void fileClose();			//文件关闭
 	void semanticError(int line, string errorMessage);
 	SymbTable* NewTable(void);	//新建空符号表
 	TypeIR* NewTy(TypeKind kind);//新建类型内部表示
+
 
 	//符号表实现
 	void CreatTable(void);		//创建符号表
@@ -111,6 +113,7 @@ public:
 	bool FindEntry(string id, SymbTable** entry);
 	bool FindField(string Id, fieldChain* head, fieldChain** Entry);
 	void PrintSymbTable();		//打印符号表
+
 
 	//检查语义信息
 	void analyze(TreeNode* currentP);	//语义分析主函数
@@ -128,4 +131,9 @@ public:
 	void statement(TreeNode* t);		//语句序列分析处理函数
 	TypeIR* Expr(TreeNode* t, AccessKind* Ekind);
 										//表达式分析处理函数
+	TypeIR* arrayVar(TreeNode* t);		//数组变量的处理分析函数
+	TypeIR* recordVar(TreeNode* t);		//记录变量中域变量的分析处理函数
+	void assignstatement(TreeNode* t);	//赋值语句分析函数
+	void callstatement(TreeNode* t);	//过程调用语句分析处理函数
+
 };

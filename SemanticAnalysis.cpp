@@ -23,8 +23,6 @@ TypeIR* intPtr;					//指向整数类型的内部表示
 TypeIR* charPtr;				//指向字符类型的内部表示
 TypeIR* boolPtr;				//指向布尔类型的内部表示
 
-
-
 void SemanticAnalysis::initial()
 {
 	for (int i = 0; i < 1000; i++)
@@ -687,10 +685,10 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 			//数组变量或域变量
 			else
 			{
-				//数组变量
+				//数组变量 Var = Var0[E]
 				if (t->attr.ExpAttr.varkind == ArrayMembV)
 					Eptr = arrayVar(t);
-				//域变量
+				//域变量 Var = Var0.id
 				else if (t->attr.ExpAttr.varkind == FieldMembV)
 					Eptr = recordVar(t);
 				else
@@ -739,6 +737,185 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 	}
 	return Eptr;
 }
+
+//数组变量的处理分析函数
+TypeIR* SemanticAnalysis::arrayVar(TreeNode* t)
+{
+	TypeIR* Eptr = nullptr;
+	SymbTable* entry = nullptr;
+	if (FindEntry(t->name[0], &entry))
+	{
+		string temp = t->name[0].c_str();
+		semanticError(t->lineno, temp + "未找到此标识符");
+		entry = nullptr;
+	}
+	else
+	{
+		if (FindAttr(entry).kind != varKind)
+		{
+			string temp = t->name[0].c_str();
+			semanticError(t->lineno, temp + "不是变量");
+		}
+		else
+		{
+			if (FindAttr(entry).idtype != NULL)
+			{
+				string temp = t->name[0].c_str();
+				semanticError(t->lineno, temp + "不是数组变量");
+			}
+			else
+			{
+				//数组下标类型
+				TypeIR* temp1 = NULL;
+				TypeIR* temp2 = NULL;
+				temp1 = entry->attrIR.idtype->More.ArrayAttr.indexTy;
+				temp2 = Expr(t->child[0], NULL);
+				if (temp1 == NULL || temp2 == NULL)
+					return NULL;
+
+				if (Compat(temp1, temp2))
+					Eptr = entry->attrIR.idtype->More.ArrayAttr.elemTy;
+				else
+				{
+					string temp = t->name[0].c_str();
+					semanticError(t->lineno, temp + "与下标类型不相符");
+				}
+			}
+		}
+	}
+	return Eptr;
+}
+
+//记录变量中域变量的分析处理函数
+TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
+{
+	TypeIR* Eptr = nullptr;
+	SymbTable* entry = nullptr;
+	if (FindEntry(t->name[0], &entry) == false)
+	{
+		string temp = t->name[0].c_str();
+		semanticError(t->lineno, temp + "未找到此标识符");
+	}
+	else
+	{
+		if (FindAttr(entry).kind != varKind)
+		{
+			string temp = t->name[0].c_str();
+			semanticError(t->lineno, temp + "不是变量");
+		}
+		else
+		{
+			if (FindAttr(entry).idtype->kind != recordTy)
+			{
+				string temp = t->name[0].c_str();
+				semanticError(t->lineno, temp + "不是变量");
+			}
+			//检查合法域名,看id名是否在域里
+			else
+			{
+				fieldChain* tempF = NULL;
+				tempF = entry->attrIR.idtype->More.body;
+				while (tempF != NULL)
+				{
+					//不相等测下一个
+					if (t->child[0]->name[0] != tempF->id)
+						tempF = tempF->Next;
+					else
+						Eptr = tempF->UnitType;
+				}
+
+				
+				if (tempF == NULL)
+				{
+					string temp = t->name[0].c_str();
+					semanticError(t->lineno, temp + "不是合法域名");
+				}
+				else
+				{
+					//?数组变量
+					if (t->child[0]->child != nullptr)
+						Eptr = arrayVar(t->child[0]);
+				}
+			}
+		}
+	}
+	return Eptr;
+}
+
+//赋值语句分析
+void SemanticAnalysis::assignstatement(TreeNode* t)
+{
+	TypeIR* Eptr = nullptr;
+	SymbTable* entry = nullptr;
+	TreeNode* child1 = t->child[0];
+	TreeNode* child2 = t->child[1];
+
+	if (child1->child[0] == NULL)
+	{
+		if (FindEntry(t->name[0], &entry) == false)
+		{
+			string temp = t->name[0].c_str();
+			semanticError(t->lineno, temp + "未找到此标识符");
+			entry = nullptr;
+		}
+		else
+		{
+			if (FindAttr(entry).kind != varKind)
+			{
+				string temp = t->name[0].c_str();
+				semanticError(t->lineno, temp + "不是变量");
+			}
+			else
+			{
+				Eptr = entry->attrIR.idtype;
+				child1->table[0] = entry;
+			}
+		}
+	}
+	else
+	{
+		if (child1->attr.ExpAttr.varkind == ArrayMembV)
+			Eptr = arrayVar(child1);
+		//? child1->attr.ExpAttr.varkind==FieldMembV 是否判断
+		else
+			Eptr = recordVar(child1);
+	}
+
+	//检查赋值号两侧是否等价
+	if (Eptr != NULL)
+		if (!Compat(Expr(child2, NULL), Eptr))
+			semanticError(t->lineno, "等号两侧不等价");
+}
+
+//过程语句分析
+void SemanticAnalysis::callstatement(TreeNode* t)
+{
+	SymbTable* entry = NULL;
+	bool temp = FindEntry(t->child[0]->name[0], &entry);
+	t->child[0]->table[0] = entry;
+
+	if (temp == false)
+	{
+		string temp = t->name[0].c_str();
+		semanticError(t->lineno, temp + "未找到此函数");
+	}
+	else
+	{
+		if (FindAttr(entry).kind != procKind)
+		{
+			string temp = t->name[0].c_str();
+			semanticError(t->lineno, temp + "不是函数名");
+		}
+		else
+		{
+			/*===============================*/
+			//形式参匹配
+			/*===============================*/
+		}
+
+	}
+}
+
 
 
 
