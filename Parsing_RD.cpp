@@ -15,7 +15,6 @@
 FILE* fin;
 FILE* flisting;
 int tokenNum;		//读到第几个token序列了
-bool Error;
 Token token;		//正在判断的token序列
 int line0;			//在代码中的行数
 string temp_name;	//临时存变量名
@@ -24,6 +23,7 @@ FILE* fp;			//读入文件
 int indentation;	//缩进
 ofstream treeFile;	//树形文件
 FILE* listing;
+bool Error;
 
 //语法树可视化使用变量
 int circleX, circleY, circleR;	//语法树图形化节点坐标x, y, 半径r
@@ -69,7 +69,7 @@ void RecursiveDescentParsing::ReadNextToken()
 {
 	//FILE* fp;
 	//fopen_s(&fp, "tokenList.txt", "rb");
-	if (fp == NULL)
+	if (fp == nullptr)
 	{
 		printf("tokenList打开失败!\n");
 		Error = true;
@@ -121,7 +121,7 @@ TreeNode* RecursiveDescentParsing::parse(void)
 {
 	ReadNextToken();
 
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	t = Program();
 
 	//if (token.word.Lex != ENDFILE1)
@@ -137,7 +137,7 @@ TreeNode* RecursiveDescentParsing::Program(void)
 
 	//建立根节点
 	TreeNode* root = new TreeNode;
-	if (root == NULL)
+	if (root == nullptr)
 	{
 		syntaxError("内存溢出");
 		Error = true;
@@ -145,27 +145,27 @@ TreeNode* RecursiveDescentParsing::Program(void)
 	}
 	else {
 		for (int i = 0; i < 3; i++)
-			root->child[i] = NULL;
-		root->sibling = NULL;
+			root->child[i] = nullptr;
+		root->sibling = nullptr;
 		root->nodekind = ProK;
 		root->lineno = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			root->name[i] = "";
-			root->table[i] = NULL;
+			root->table[i] = nullptr;
 		}
 	}
 
 
-	if (root != NULL)
+	if (root != nullptr)
 	{
 		root->lineno = 0;
-		if (t != NULL) 
+		if (t != nullptr) 
 			root->child[0] = t;
 		else 
 			syntaxError("缺少程序头");
-		if (q != NULL) root->child[1] = q;
-		if (s != NULL) root->child[2] = s;
+		if (q != nullptr) root->child[1] = q;
+		if (s != nullptr) root->child[2] = s;
 		else 
 			syntaxError("缺少程序体");
 	}
@@ -177,26 +177,26 @@ TreeNode* RecursiveDescentParsing::Program(void)
 TreeNode* RecursiveDescentParsing::ProgramHead(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 	{
 		syntaxError("内存溢出");
 		Error = true;
 	}
 	else {
 		for (int i = 0; i < 3; i++) 
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = PheadK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 	match(PROGRAM);
-	if ((t != NULL) && (token.word.Lex == ID))
+	if ((t != nullptr) && (token.word.Lex == ID))
 	{
 		t->lineno = 0;
 		t->name[0] = token.word.Sem;
@@ -209,77 +209,77 @@ TreeNode* RecursiveDescentParsing::DeclarePart(void)
 {
 	//newDecANode
 	TreeNode* typeP = new TreeNode;
-	if (typeP == NULL)
+	if (typeP == nullptr)
 	{
 		syntaxError("内存溢出");
 		Error = true;
 	}
 	else {
 		for (int i = 0; i < 3; i++) 
-			typeP->child[i] = NULL;
-		typeP->sibling = NULL;
+			typeP->child[i] = nullptr;
+		typeP->sibling = nullptr;
 		typeP->nodekind = TypeK;
 		typeP->lineno = token.lineShow;
 		for (int i = 0; i < 10; i++)
 		{
 			typeP->name[i] = "\0";
-			typeP->table[i] = NULL;
+			typeP->table[i] = nullptr;
 		}
 	}
 
 	TreeNode* pp = typeP;
-	if (typeP != NULL)
+	if (typeP != nullptr)
 	{
 		typeP->lineno = 0;
 		TreeNode* tp1 = TypeDec();
-		if (tp1 != NULL)
+		if (tp1 != nullptr)
 			typeP->child[0] = tp1;
 		else
 		{
 			free(typeP);
-			typeP = NULL;
+			typeP = nullptr;
 		}
 	}
 
 	
 	TreeNode* varP = new TreeNode;
-	if (varP == NULL)
+	if (varP == nullptr)
 	{
 		syntaxError("内存溢出");
 		Error = true;
 	}
 	else {
 		for (int i = 0; i < 3; i++)
-			varP->child[i] = NULL;
-		varP->sibling = NULL;
+			varP->child[i] = nullptr;
+		varP->sibling = nullptr;
 		varP->nodekind = VarK;
 		varP->lineno = token.lineShow;
 		for (int i = 0; i < 10; i++)
 		{
 			varP->name[i] = "\0";
-			varP->table[i] = NULL;
+			varP->table[i] = nullptr;
 		}
 	}
 
-	if (varP != NULL)
+	if (varP != nullptr)
 	{
 		varP->lineno = 0;
 		TreeNode* tp2 = VarDec();
-		if (tp2 != NULL)
+		if (tp2 != nullptr)
 			varP->child[0] = tp2;
 		else
 		{
 			free(varP);
-			varP = NULL;
+			varP = nullptr;
 		}
 	}
 
 	TreeNode* s = ProcDec();
 
-	if (varP == NULL) 
+	if (varP == nullptr) 
 		varP = s;
 
-	if (typeP == NULL)
+	if (typeP == nullptr)
 		pp = typeP = varP;
 
 	//?typeP = varP, VarP = s
@@ -301,7 +301,7 @@ TreeNode* RecursiveDescentParsing::DeclarePart(void)
 //？< typeDec > ::= ε | TypeDeclaration  
 TreeNode* RecursiveDescentParsing::TypeDec(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == TYPE)
 		t = TypeDeclaration();
 
@@ -320,7 +320,7 @@ TreeNode* RecursiveDescentParsing::TypeDeclaration(void)
 {
 	match(TYPE);
 	TreeNode* t = TypeDecList();
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("缺少类型声明");
 	return t;
 }
@@ -328,23 +328,23 @@ TreeNode* RecursiveDescentParsing::TypeDeclaration(void)
 TreeNode* RecursiveDescentParsing::TypeDecList(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++) 
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = DecK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		TypeId(t);
@@ -352,7 +352,7 @@ TreeNode* RecursiveDescentParsing::TypeDecList(void)
 		TypeName(t);
 		match(SEMI);
 		TreeNode* p = TypeDecMore();
-		if (p != NULL)
+		if (p != nullptr)
 			t->sibling = p;
 	}
 	return t;
@@ -361,7 +361,7 @@ TreeNode* RecursiveDescentParsing::TypeDecList(void)
 //？< typeDecMore > ::=    ε | TypeDecList
 TreeNode* RecursiveDescentParsing::TypeDecMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == VAR || token.word.Lex == PROCEDURE || token.word.Lex == BEGIN) {}
 	else if (token.word.Lex == ID)
 		t = TypeDecList();
@@ -376,10 +376,10 @@ TreeNode* RecursiveDescentParsing::TypeDecMore(void)
 
 void RecursiveDescentParsing::TypeId(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		int temp = t->idnum;
-		if ((token.word.Lex == ID) && (t != NULL))
+		if ((token.word.Lex == ID) && (t != nullptr))
 		{
 			t->name[temp] = token.word.Sem;
 			temp++;
@@ -392,7 +392,7 @@ void RecursiveDescentParsing::TypeId(TreeNode* t)
 //？< typeName > ::= baseType | structureType | id 
 void RecursiveDescentParsing::TypeName(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		if (token.word.Lex == INTEGER || token.word.Lex == CHAR1)
 			BaseType(t);
@@ -416,7 +416,7 @@ void RecursiveDescentParsing::TypeName(TreeNode* t)
 //？< baseType > ::=  INTEGER | CHAR 
 void RecursiveDescentParsing::BaseType(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		if (token.word.Lex == INTEGER)
 		{
@@ -440,7 +440,7 @@ void RecursiveDescentParsing::BaseType(TreeNode* t)
 //？< structureType > ::=  arrayType | recType
 void RecursiveDescentParsing::StructureType(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		if (token.word.Lex == ARRAY)
 			ArrayType(t);
@@ -482,10 +482,10 @@ void RecursiveDescentParsing::ArrayType(TreeNode* t)
 
 void RecursiveDescentParsing::RecType(TreeNode* t)
 {
-	TreeNode* p = NULL;
+	TreeNode* p = nullptr;
 	match(RECORD);
 	p = FieldDecList();
-	if (p != NULL)
+	if (p != nullptr)
 		t->child[0] = p;
 	else
 		syntaxError("记录内容缺失");
@@ -496,24 +496,24 @@ void RecursiveDescentParsing::RecType(TreeNode* t)
 TreeNode* RecursiveDescentParsing::FieldDecList(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++)
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = DecK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	TreeNode* p = NULL;
-	if (t != NULL)
+	TreeNode* p = nullptr;
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		if (token.word.Lex == INTEGER || token.word.Lex == CHAR1)
@@ -544,7 +544,7 @@ TreeNode* RecursiveDescentParsing::FieldDecList(void)
 //?< fieldDecMore > ::=  ε | fieldDecList
 TreeNode* RecursiveDescentParsing::FieldDecMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == END) {}
 	else if (token.word.Lex == INTEGER || token.word.Lex == CHAR1 || token.word.Lex == ARRAY)
 		t = FieldDecList();
@@ -559,7 +559,7 @@ TreeNode* RecursiveDescentParsing::FieldDecMore(void)
 
 void RecursiveDescentParsing::IdList(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		if (token.word.Lex == ID)
 		{
@@ -591,7 +591,7 @@ void RecursiveDescentParsing::IdMore(TreeNode* t)
 //?< varDec > ::=  ε |  varDeclaration  
 TreeNode* RecursiveDescentParsing::VarDec(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == PROCEDURE || token.word.Lex == BEGIN){}
 	else if (token.word.Lex == VAR)
 		t = VarDeclaration();
@@ -608,7 +608,7 @@ TreeNode* RecursiveDescentParsing::VarDeclaration(void)
 {
 	match(VAR);
 	TreeNode* t = VarDecList();
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("变量声明缺失");
 	return t;
 }
@@ -616,24 +616,24 @@ TreeNode* RecursiveDescentParsing::VarDeclaration(void)
 TreeNode* RecursiveDescentParsing::VarDecList(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++)
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = DecK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	TreeNode* p = NULL;
-	if (t != NULL)
+	TreeNode* p = nullptr;
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		TypeName(t);
@@ -648,7 +648,7 @@ TreeNode* RecursiveDescentParsing::VarDecList(void)
 //？< varDecMore > ::=  ε |  varDecList 
 TreeNode* RecursiveDescentParsing::VarDecMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == PROCEDURE || token.word.Lex == BEGIN){}
 	else if (token.word.Lex == INTEGER || token.word.Lex == CHAR1 || token.word.Lex == ARRAY ||
 			 token.word.Lex == RECORD || token.word.Lex == ID)
@@ -698,7 +698,7 @@ void RecursiveDescentParsing::VarIdMore(TreeNode* t)
 //？< procDec > ::=  ε |  procDeclaration
 TreeNode* RecursiveDescentParsing::ProcDec(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == BEGIN){}
 	else if (token.word.Lex == PROCEDURE)
 		t = ProcDeclaration();
@@ -714,11 +714,11 @@ TreeNode* RecursiveDescentParsing::ProcDec(void)
 TreeNode* RecursiveDescentParsing::ProcDeclaration(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = ProcDecK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
@@ -726,12 +726,12 @@ TreeNode* RecursiveDescentParsing::ProcDeclaration(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(PROCEDURE);
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		if (token.word.Lex == ID)
@@ -753,7 +753,7 @@ TreeNode* RecursiveDescentParsing::ProcDeclaration(void)
 
 void RecursiveDescentParsing::ParamList(TreeNode* t)
 {
-	TreeNode* p = NULL;
+	TreeNode* p = nullptr;
 	if (token.word.Lex == RPAREN){}
 	else if (token.word.Lex == INTEGER || token.word.Lex == CHAR1 || token.word.Lex == ARRAY ||
 			 token.word.Lex == RECORD || token.word.Lex == ID || token.word.Lex == VAR)
@@ -773,7 +773,7 @@ TreeNode* RecursiveDescentParsing::ParamDecList(void)
 {
 	TreeNode * t = Param();
 	TreeNode * p = ParamMore();
-	if (p!=NULL)
+	if (p!=nullptr)
 	{
 		t->sibling = p;
 	}
@@ -783,13 +783,13 @@ TreeNode* RecursiveDescentParsing::ParamDecList(void)
 //？< paramMore > ::=  ε | ; paramDecList 
 TreeNode* RecursiveDescentParsing::ParamMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == RPAREN){}
 	else if (token.word.Lex == SEMI)
 	{
 		match(SEMI);
 		t = ParamDecList();
-		if (t == NULL)
+		if (t == nullptr)
 			syntaxError("参数缺失");
 	}
 	else
@@ -805,23 +805,23 @@ TreeNode* RecursiveDescentParsing::ParamMore(void)
 TreeNode* RecursiveDescentParsing::Param(void)
 {
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++)
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = DecK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		if (token.word.Lex == INTEGER || token.word.Lex == CHAR1 || token.word.Lex == ARRAY ||
@@ -850,7 +850,7 @@ TreeNode* RecursiveDescentParsing::Param(void)
 
 void RecursiveDescentParsing::FormList(TreeNode* t)
 {
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		if (token.word.Lex == ID)
 		{
@@ -882,71 +882,71 @@ TreeNode* RecursiveDescentParsing::ProcDecPart(void)
 {
 	//newDecANode(typeK);
 	TreeNode* typeP = new TreeNode;
-	if (typeP == NULL)
+	if (typeP == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++) 
-			typeP->child[i] = NULL;
-		typeP->sibling = NULL;
+			typeP->child[i] = nullptr;
+		typeP->sibling = nullptr;
 		typeP->nodekind = TypeK;
 		typeP->lineno = token.lineShow;
 		for (int i = 0; i < 10; i++)
 		{
 			typeP->name[i] = "\0";
-			typeP->table[i] = NULL;
+			typeP->table[i] = nullptr;
 		}
 	}
 
 	TreeNode* pp = typeP;
-	if (typeP != NULL)
+	if (typeP != nullptr)
 	{
 		typeP->lineno = 0;
 		TreeNode* tp1 = TypeDec();
-		if (tp1 != NULL)
+		if (tp1 != nullptr)
 			typeP->child[0] = tp1;
 		else
 		{
 			free(typeP);
-			typeP = NULL;
+			typeP = nullptr;
 		}
 	}
 
 	//newDecANode(VarK);
 	TreeNode* varP = new TreeNode;
-	if (varP == NULL)
+	if (varP == nullptr)
 		syntaxError("内存溢出");
 	else {
 		for (int i = 0; i < 3; i++)
-			varP->child[i] = NULL;
-		varP->sibling = NULL;
+			varP->child[i] = nullptr;
+		varP->sibling = nullptr;
 		varP->nodekind = VarK;
 		varP->lineno = token.lineShow;
 		for (int i = 0; i < 10; i++)
 		{
 			varP->name[i] = "\0";
-			varP->table[i] = NULL;
+			varP->table[i] = nullptr;
 		}
 	}
 
-	if (varP != NULL)
+	if (varP != nullptr)
 	{
 		varP->lineno = 0;
 		TreeNode* tp2 = VarDec();
-		if (tp2 != NULL)
+		if (tp2 != nullptr)
 			varP->child[0] = tp2;
 		else
 		{
 			free(varP);
-			varP = NULL;
+			varP = nullptr;
 		}
 	}
 	TreeNode* s = ProcDec();
-	if (s == NULL) {}
+	if (s == nullptr) {}
 
-	if (varP == NULL) 
+	if (varP == nullptr) 
 		varP = s;
 
-	if (typeP == NULL) 
+	if (typeP == nullptr) 
 		pp = typeP = varP;
 
 	if (typeP != varP)
@@ -965,7 +965,7 @@ TreeNode* RecursiveDescentParsing::ProcDecPart(void)
 TreeNode* RecursiveDescentParsing::ProcBody(void)
 {
 	TreeNode* t = ProgramBody();
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("程序体缺失");
 	return t;
 }
@@ -974,23 +974,23 @@ TreeNode* RecursiveDescentParsing::ProgramBody(void)
 {
 	//newStmlNode();
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmLK;
 		t->lineno = token.lineShow;
 		t->idnum = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(BEGIN);
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = 0;
 		t->child[0] = StmList();
@@ -1003,8 +1003,8 @@ TreeNode* RecursiveDescentParsing::StmList(void)
 {
 	TreeNode* t = Stm();
 	TreeNode* p = StmMore();
-	if (t != NULL)
-		if (p != NULL)
+	if (t != nullptr)
+		if (p != nullptr)
 			t->sibling = p;
 	return t;
 }
@@ -1012,7 +1012,7 @@ TreeNode* RecursiveDescentParsing::StmList(void)
 //?< stmMore > ::=   ε |  ; stmList  ???END,ENDWH,FI,ELSE
 TreeNode* RecursiveDescentParsing::StmMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == END || token.word.Lex == ENDWH){}
 	else if (token.word.Lex == SEMI)
 	{
@@ -1033,7 +1033,7 @@ TreeNode* RecursiveDescentParsing::StmMore(void)
 //	            | returnStm        {RETURN}  | id  assCall      {id}
 TreeNode* RecursiveDescentParsing::Stm(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == IF)
 		t = ConditionalStm();
 	else if (token.word.Lex == WHILE)
@@ -1062,7 +1062,7 @@ TreeNode* RecursiveDescentParsing::Stm(void)
 //？< assCall > ::=   assignmentRest  {:=,LMIDPAREN,DOT}  | callStmRest  {(}   ???LMIDPAREN,DOT
 TreeNode* RecursiveDescentParsing::AssCall(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == ASSIGN)
 		t = AssignmentRest();
 	else if (token.word.Lex == LPAREN)
@@ -1080,11 +1080,11 @@ TreeNode* RecursiveDescentParsing::AssignmentRest(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = AssignK;
 		t->lineno = token.lineShow;
@@ -1092,22 +1092,22 @@ TreeNode* RecursiveDescentParsing::AssignmentRest(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 
 		//newExpNode
 		TreeNode* child1 = new TreeNode;
-		if (child1 == NULL)
+		if (child1 == nullptr)
 			syntaxError("内存泄露");
 		else {
 			for (int i = 0; i < 3; i++)
-				child1->child[i] = NULL;
-			child1->sibling = NULL;
+				child1->child[i] = nullptr;
+			child1->sibling = nullptr;
 			child1->nodekind = ExpK;
 			child1->kind.exp = VariK;
 			child1->lineno = token.lineShow;
@@ -1116,11 +1116,11 @@ TreeNode* RecursiveDescentParsing::AssignmentRest(void)
 			for (int i = 0; i < 10; i++)
 			{
 				child1->name[i] = "\0";
-				child1->table[i] = NULL;
+				child1->table[i] = nullptr;
 			}
 		}
 
-		if (child1 != NULL)
+		if (child1 != nullptr)
 		{
 			child1->lineno = line0;
 			child1->name[0] = temp_name;
@@ -1138,11 +1138,11 @@ TreeNode* RecursiveDescentParsing::ConditionalStm(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = IfK;
 		t->lineno = token.lineShow;
@@ -1150,22 +1150,22 @@ TreeNode* RecursiveDescentParsing::ConditionalStm(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(IF);
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		t->child[0] = Exp();
 	}
 	match(THEN);
-	if (t != NULL)  t->child[1] = StmList();
+	if (t != nullptr)  t->child[1] = StmList();
 	if (token.word.Lex == ELSE)
 	{
 		match(ELSE);
-		if (t != NULL)
+		if (t != nullptr)
 			t->child[2] = StmList();
 	}
 	match(FI);
@@ -1176,11 +1176,11 @@ TreeNode* RecursiveDescentParsing::LoopStm(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = WhileK;
 		t->lineno = token.lineShow;
@@ -1188,12 +1188,12 @@ TreeNode* RecursiveDescentParsing::LoopStm(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(WHILE);
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		t->child[0] = Exp();
@@ -1208,11 +1208,11 @@ TreeNode* RecursiveDescentParsing::InputStm(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = ReadK;
 		t->lineno = token.lineShow;
@@ -1220,13 +1220,13 @@ TreeNode* RecursiveDescentParsing::InputStm(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(READ);
 	match(LPAREN);
-	if ((t != NULL) && (token.word.Lex == ID))
+	if ((t != nullptr) && (token.word.Lex == ID))
 	{
 		t->lineno = line0;
 		t->name[0] = token.word.Sem;
@@ -1241,11 +1241,11 @@ TreeNode* RecursiveDescentParsing::OutputStm(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = WriteK;
 		t->lineno = token.lineShow;
@@ -1253,13 +1253,13 @@ TreeNode* RecursiveDescentParsing::OutputStm(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(WRITE);
 	match(LPAREN);
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 		t->child[0] = Exp();
@@ -1272,11 +1272,11 @@ TreeNode* RecursiveDescentParsing::ReturnStm(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = ReturnK;
 		t->lineno = token.lineShow;
@@ -1284,12 +1284,12 @@ TreeNode* RecursiveDescentParsing::ReturnStm(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(RETURN);
-	if (t != NULL)
+	if (t != nullptr)
 		t->lineno = line0;
 	return t;
 }
@@ -1298,11 +1298,11 @@ TreeNode* RecursiveDescentParsing::CallStmRest(void)
 {
 	//newStmtNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存溢出");
 	else {
-		for (int i = 0; i < 3; i++) t->child[i] = NULL;
-		t->sibling = NULL;
+		for (int i = 0; i < 3; i++) t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = StmtK;
 		t->kind.stmt = CallK;
 		t->lineno = token.lineShow;
@@ -1310,24 +1310,24 @@ TreeNode* RecursiveDescentParsing::CallStmRest(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
 	match(LPAREN);
 	/*函数调用时，其子节点指向实参*/
-	if (t != NULL)
+	if (t != nullptr)
 	{
 		t->lineno = line0;
 
 		/*函数名的结点也用表达式类型结点*/
 		TreeNode* child0 = new TreeNode;
-		if (child0 == NULL)
+		if (child0 == nullptr)
 			syntaxError("内存溢出");
 		else {
 			for (int i = 0; i < 3; i++) 
-				child0->child[i] = NULL;
-			child0->sibling = NULL;
+				child0->child[i] = nullptr;
+			child0->sibling = nullptr;
 			child0->nodekind = ExpK;
 			child0->kind.exp = VariK;
 			child0->lineno = token.lineShow;
@@ -1336,11 +1336,11 @@ TreeNode* RecursiveDescentParsing::CallStmRest(void)
 			for (int i = 0; i < 10; i++)
 			{
 				child0->name[i] = "\0";
-				child0->table[i] = NULL;
+				child0->table[i] = nullptr;
 			}
 		}
 
-		if (child0 != NULL)
+		if (child0 != nullptr)
 		{
 			child0->lineno = line0;
 			child0->name[0] = temp_name;
@@ -1356,12 +1356,12 @@ TreeNode* RecursiveDescentParsing::CallStmRest(void)
 //?< actParamList > ::=     ε |  exp actParamMore
 TreeNode* RecursiveDescentParsing::ActParamList(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == RPAREN) {}
 	else if (token.word.Lex == ID || token.word.Lex == INTC)
 	{
 		t = Exp();
-		if (t != NULL)
+		if (t != nullptr)
 			t->sibling = ActParamMore();
 	}
 	else
@@ -1376,7 +1376,7 @@ TreeNode* RecursiveDescentParsing::ActParamList(void)
 //?< actParamMore > ::=     ε |  , actParamList 
 TreeNode* RecursiveDescentParsing::ActParamMore(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == RPAREN){}
 	else if (token.word.Lex == COMMA)
 	{
@@ -1399,12 +1399,12 @@ TreeNode* RecursiveDescentParsing::Exp(void)
 	{
 		//newExpNode()
 		TreeNode* p = new TreeNode;
-		if (p == NULL)
+		if (p == nullptr)
 			syntaxError("内存泄露");
 		else {
 			for (int i = 0; i < 3; i++)
-				p->child[i] = NULL;
-			p->sibling = NULL;
+				p->child[i] = nullptr;
+			p->sibling = nullptr;
 			p->nodekind = ExpK;
 			p->kind.exp = OpK;
 			p->lineno = token.lineShow;
@@ -1413,11 +1413,11 @@ TreeNode* RecursiveDescentParsing::Exp(void)
 			for (int i = 0; i < 10; i++)
 			{
 				p->name[i] = "\0";
-				p->table[i] = NULL;
+				p->table[i] = nullptr;
 			}
 		}
 
-		if (p != NULL)
+		if (p != nullptr)
 		{
 			p->lineno = line0;
 			p->child[0] = t;
@@ -1425,7 +1425,7 @@ TreeNode* RecursiveDescentParsing::Exp(void)
 			t = p;
 		}
 		match(token.word.Lex);
-		if (t != NULL)
+		if (t != nullptr)
 			t->child[1] = Simple_exp();
 	}
 	return t;
@@ -1439,12 +1439,12 @@ TreeNode* RecursiveDescentParsing::Simple_exp(void)
 	{
 		//newExpNode()
 		TreeNode* p = new TreeNode;
-		if (p == NULL)
+		if (p == nullptr)
 			syntaxError("内存泄露");
 		else {
 			for (int i = 0; i < 3; i++)
-				p->child[i] = NULL;
-			p->sibling = NULL;
+				p->child[i] = nullptr;
+			p->sibling = nullptr;
 			p->nodekind = ExpK;
 			p->kind.exp = OpK;
 			p->lineno = token.lineShow;
@@ -1453,11 +1453,11 @@ TreeNode* RecursiveDescentParsing::Simple_exp(void)
 			for (int i = 0; i < 10; i++)
 			{
 				p->name[i] = "\0";
-				p->table[i] = NULL;
+				p->table[i] = nullptr;
 			}
 		}
 
-		if (p != NULL)
+		if (p != nullptr)
 		{
 			p->lineno = line0;
 			p->child[0] = t;
@@ -1478,12 +1478,12 @@ TreeNode* RecursiveDescentParsing::Term(void)
 	{
 		//newExpNode()
 		TreeNode* p = new TreeNode;
-		if (p == NULL)
+		if (p == nullptr)
 			syntaxError("内存泄露");
 		else {
 			for (int i = 0; i < 3; i++)
-				p->child[i] = NULL;
-			p->sibling = NULL;
+				p->child[i] = nullptr;
+			p->sibling = nullptr;
 			p->nodekind = ExpK;
 			p->kind.exp = OpK;
 			p->lineno = token.lineShow;
@@ -1492,11 +1492,11 @@ TreeNode* RecursiveDescentParsing::Term(void)
 			for (int i = 0; i < 10; i++)
 			{
 				p->name[i] = "\0";
-				p->table[i] = NULL;
+				p->table[i] = nullptr;
 			}
 		}
 
-		if (p != NULL)
+		if (p != nullptr)
 		{
 			p->lineno = line0;
 			p->child[0] = t;
@@ -1513,17 +1513,17 @@ TreeNode* RecursiveDescentParsing::Term(void)
 
 TreeNode* RecursiveDescentParsing::Factor(void)
 {
-	TreeNode* t = NULL;
+	TreeNode* t = nullptr;
 	if (token.word.Lex == INTC)
 	{
 		//newExpNode()
-		TreeNode* t = new TreeNode;
-		if (t == NULL)
+		t = new TreeNode;
+		if (t == nullptr)
 			syntaxError("内存泄露");
 		else {
 			for (int i = 0; i < 3; i++)
-				t->child[i] = NULL;
-			t->sibling = NULL;
+				t->child[i] = nullptr;
+			t->sibling = nullptr;
 			t->nodekind = ExpK;
 			t->kind.exp = ConstK;
 			t->lineno = token.lineShow;
@@ -1532,11 +1532,11 @@ TreeNode* RecursiveDescentParsing::Factor(void)
 			for (int i = 0; i < 10; i++)
 			{
 				t->name[i] = "\0";
-				t->table[i] = NULL;
+				t->table[i] = nullptr;
 			}
 		}
 
-		if ((t != NULL) && (token.word.Lex == INTC))
+		if ((t != nullptr) && (token.word.Lex == INTC))
 		{
 			t->lineno = line0;
 			t->attr.ExpAttr.val = atoi(token.word.Sem.c_str());
@@ -1564,12 +1564,12 @@ TreeNode* RecursiveDescentParsing::Variable(void)
 {
 	//newExpNode()
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存泄露");
 	else {
 		for (int i = 0; i < 3; i++)
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = ExpK;
 		t->kind.exp = VariK;
 		t->lineno = token.lineShow;
@@ -1578,11 +1578,11 @@ TreeNode* RecursiveDescentParsing::Variable(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	if ((t != NULL) && (token.word.Lex == ID))
+	if ((t != nullptr) && (token.word.Lex == ID))
 	{
 		t->lineno = line0;
 		t->name[0] = token.word.Sem;
@@ -1631,12 +1631,12 @@ TreeNode* RecursiveDescentParsing::Fieldvar(void)
 {
 	//newExpNode
 	TreeNode* t = new TreeNode;
-	if (t == NULL)
+	if (t == nullptr)
 		syntaxError("内存泄露");
 	else {
 		for (int i = 0; i < 3; i++)
-			t->child[i] = NULL;
-		t->sibling = NULL;
+			t->child[i] = nullptr;
+		t->sibling = nullptr;
 		t->nodekind = ExpK;
 		t->kind.exp = VariK;
 		t->lineno = token.lineShow;
@@ -1645,11 +1645,11 @@ TreeNode* RecursiveDescentParsing::Fieldvar(void)
 		for (int i = 0; i < 10; i++)
 		{
 			t->name[i] = "\0";
-			t->table[i] = NULL;
+			t->table[i] = nullptr;
 		}
 	}
 
-	if ((t != NULL) && (token.word.Lex == ID))
+	if ((t != nullptr) && (token.word.Lex == ID))
 	{
 		t->lineno = line0;
 		t->name[0] = token.word.Sem;
@@ -1690,7 +1690,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 	{
 		indentation += 4;		//缩进加4
 
-		while (tree != NULL)
+		while (tree != nullptr)
 		{
 			//打印行号
 			if (tree->lineno == 0)
@@ -2060,7 +2060,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 				case VarK:
 				{
 					treeFile << "VarK  ";
-					//if (tree->table[0] != NULL)
+					//if (tree->table[0] != nullptr)
 					//	fprintf(listing, "%d  %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
 					
 					_stprintf_s(temp, _T("VarK"));
@@ -2077,7 +2077,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 				{
 					treeFile << "ProcDecK  ";
 					treeFile << tree->name[0] << "  ";
-					//if (tree->table[0] != NULL)
+					//if (tree->table[0] != nullptr)
 					//	fprintf(listing, "%d %d %d  ", tree->table[0]->attrIR.More.ProcAttr.mOff, tree->table[0]->attrIR.More.ProcAttr.nOff, tree->table[0]->attrIR.More.ProcAttr.level);
 					
 					stmlkNum++;
@@ -2198,7 +2198,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 							_stprintf_s(temp, _T("Read"));
 							if (stmlkNum == 1)
 								outtextxy(circleX - 15, circleY + 7, temp);
-							//if (tree->table[0] != NULL)
+							//if (tree->table[0] != nullptr)
 							//	fprintf(listing, "%d   %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
 							break;
 
@@ -2303,7 +2303,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 									treeFile << "var type error!";
 									Error = true;
 							}
-							//if (tree->table[0] != NULL)
+							//if (tree->table[0] != nullptr)
 							//	fprintf(listing, "%d   %d  ", tree->table[0]->attrIR.More.VarAttr.off, tree->table[0]->attrIR.More.VarAttr.level);
 							break;
 

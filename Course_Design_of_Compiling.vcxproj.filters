@@ -24,12 +24,18 @@
     <ClCompile Include="the_main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SemanticAnalysis.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalyzer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Parsing_RD.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SemanticAnalysis.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

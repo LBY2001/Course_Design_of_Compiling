@@ -1,47 +1,12 @@
 program  p
 type  t = integer;
 c = char;
-var   integer    v1,v2;
-char   v2;
+var   integer    v7,v8;
+char   v9;
 integer v4;
-
-procedure q(integer i);
-
 begin
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
-v1:= v1 + 10;
-write(v1)
-end
-
-
-procedure p(integer i);
-
-begin
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
-v1:= v1 + 10;
-write(v1)
-end
-
-
-begin
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
-v1:= v1 + 10;
-write(v1);
-read(v1);
+v1:= v2 + 10;
+v3:= v4 + v5;
+v6:= 10 + 10;
 write(v1)
 end.

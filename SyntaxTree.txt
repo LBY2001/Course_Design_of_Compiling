@@ -4,72 +4,24 @@
 line: 2               Deck  Integer  t    
 line: 3               Deck  Chark  c    
                  VarK  
-line: 4               Deck  Integer  v1  v2    
-line: 5               Deck  Chark  v2    
+line: 4               Deck  Integer  v7  v8    
+line: 5               Deck  Chark  v9    
 line: 6               Deck  Integer  v4    
-line: 8           ProcDecK  q  
-line: 8               Deck  value param:  Integer  i    
-                     StmLk  
-line: 11                  Stmtk  Read  v1  
-line: 12                  Stmtk  Assign  
-line: 12                      ExpK  Vari  Id  v1  
-line: 12                      ExpK  Op  +  
-line: 12                          ExpK  Vari  Id  v1  
-line: 13                  Stmtk  Write  
-line: 13                      ExpK  Vari  Id  v1  
-line: 14                  Stmtk  Read  v1  
-line: 15                  Stmtk  Assign  
-line: 15                      ExpK  Vari  Id  v1  
-line: 15                      ExpK  Op  +  
-line: 15                          ExpK  Vari  Id  v1  
-line: 16                  Stmtk  Write  
-line: 16                      ExpK  Vari  Id  v1  
-line: 17                  Stmtk  Read  v1  
-line: 18                  Stmtk  Assign  
-line: 18                      ExpK  Vari  Id  v1  
-line: 18                      ExpK  Op  +  
-line: 18                          ExpK  Vari  Id  v1  
-line: 19                  Stmtk  Write  
-line: 19                      ExpK  Vari  Id  v1  
-line: 23          ProcDecK  p  
-line: 23              Deck  value param:  Integer  i    
-                     StmLk  
-line: 26                  Stmtk  Read  v1  
-line: 27                  Stmtk  Assign  
-line: 27                      ExpK  Vari  Id  v1  
-line: 27                      ExpK  Op  +  
-line: 27                          ExpK  Vari  Id  v1  
-line: 28                  Stmtk  Write  
-line: 28                      ExpK  Vari  Id  v1  
-line: 29                  Stmtk  Read  v1  
-line: 30                  Stmtk  Assign  
-line: 30                      ExpK  Vari  Id  v1  
-line: 30                      ExpK  Op  +  
-line: 30                          ExpK  Vari  Id  v1  
-line: 31                  Stmtk  Write  
-line: 31                      ExpK  Vari  Id  v1  
-line: 32                  Stmtk  Read  v1  
-line: 33                  Stmtk  Assign  
-line: 33                      ExpK  Vari  Id  v1  
-line: 33                      ExpK  Op  +  
-line: 33                          ExpK  Vari  Id  v1  
-line: 34                  Stmtk  Write  
-line: 34                      ExpK  Vari  Id  v1  
                  StmLk  
-line: 39              Stmtk  Read  v1  
-line: 40              Stmtk  Assign  
-line: 40                  ExpK  Vari  Id  v1  
-line: 40                  ExpK  Op  +  
-line: 40                      ExpK  Vari  Id  v1  
-line: 41              Stmtk  Write  
-line: 41                  ExpK  Vari  Id  v1  
-line: 42              Stmtk  Read  v1  
-line: 43              Stmtk  Assign  
-line: 43                  ExpK  Vari  Id  v1  
-line: 43                  ExpK  Op  +  
-line: 43                      ExpK  Vari  Id  v1  
-line: 44              Stmtk  Write  
-line: 44                  ExpK  Vari  Id  v1  
-line: 45              Stmtk  Read  v1  
-line: 46              Stmtk  Write  
-line: 46                  ExpK  Vari  Id  v1  
+line: 8               Stmtk  Assign  
+line: 8                   ExpK  Vari  Id  v1  
+line: 8                   ExpK  Op  +  
+line: 8                       ExpK  Vari  Id  v2  
+line: 8                       ExpK  Const  Id    10  
+line: 9               Stmtk  Assign  
+line: 9                   ExpK  Vari  Id  v3  
+line: 9                   ExpK  Op  +  
+line: 9                       ExpK  Vari  Id  v4  
+line: 9                       ExpK  Vari  Id  v5  
+line: 10              Stmtk  Assign  
+line: 10                  ExpK  Vari  Id  v6  
+line: 10                  ExpK  Op  +  
+line: 10                      ExpK  Const  Id    10  
+line: 10                      ExpK  Const  Id    10  
+line: 11              Stmtk  Write  
+line: 11                  ExpK  Vari  Id  v1  

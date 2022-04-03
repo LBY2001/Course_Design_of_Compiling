@@ -74,14 +74,14 @@ typedef struct treeNode
 		StmtKind stmt;				/*记录语法树节点的语句类型，当 nodekind = StmtK 时有效，取值 IfK, 
 									  WhileK,AssignK,ReadK, WriteK, CallK,RetumK, 为语法树节点语句类型*/
 		ExpKind  exp;				/*记录语法树节点的表达式类型，当 nodekind=ExpK 时有效，取值 OpK, 
-									  ConstK,IdK, 为语法树节点表达式类型*/
+									  ConstK,varK, 为语法树节点表达式类型*/
 
 	} kind;                         /* 具体类型     */
 
 	int idnum;                      //记录一个节点中的标志符的个数
 	string name[10];				//节点中标志符的名字
 	struct symbtable* table[10];	
-	/*记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。语义分析填入？*/
+	/*记录类型名，当节点为声明类型，且类型是由类型标志符表示时有效。语义分析填入*/
 
 	struct
 	{

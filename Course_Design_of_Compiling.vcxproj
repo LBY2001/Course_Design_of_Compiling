@@ -141,11 +141,13 @@
   <ItemGroup>
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="Parsing_RD.cpp" />
+    <ClCompile Include="SemanticAnalysis.cpp" />
     <ClCompile Include="the_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="Parsing_RD.h" />
+    <ClInclude Include="SemanticAnalysis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
