@@ -103,7 +103,8 @@ public:
 	void semanticError(int line, string errorMessage);
 	SymbTable* NewTable(void);	//新建空符号表
 	TypeIR* NewTy(TypeKind kind);//新建类型内部表示
-
+	fieldChain* NewBody();		//新建域
+	ParamTable* NewParam();		//新建形参链表 
 
 	//符号表实现
 	void CreatTable(void);		//创建符号表
@@ -135,5 +136,9 @@ public:
 	TypeIR* recordVar(TreeNode* t);		//记录变量中域变量的分析处理函数
 	void assignstatement(TreeNode* t);	//赋值语句分析函数
 	void callstatement(TreeNode* t);	//过程调用语句分析处理函数
-
+	void ifstatment(TreeNode* t);		//条件语句分析处理函数
+	void whilestatement(TreeNode* t);	//循环语句分析处理函数
+	void readstatement(TreeNode* t);	//读语句分析处理函数
+	void writestatement(TreeNode* t);	//写语句分析处理函数
+	void returnstatement(TreeNode* t);	//返回语句分析处理函数
 };

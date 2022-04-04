@@ -98,6 +98,39 @@ TypeIR* SemanticAnalysis::NewTy(TypeKind kind)
 	return table;
 }
 
+fieldChain* SemanticAnalysis::NewBody()
+{
+	fieldChain* Ptr = new fieldChain;
+	if (Ptr == NULL)
+	{
+		errorFile << "内存溢出 " << endl;
+		hasError = true;
+	}
+	else
+	{
+		Ptr->Next = NULL;
+		Ptr->off = 0;
+		Ptr->UnitType = NULL;
+	}
+	return Ptr;
+}
+
+ParamTable* SemanticAnalysis::NewParam()
+{
+	ParamTable* Ptr = new ParamTable;
+	if (Ptr == NULL)
+	{
+		errorFile << "内存溢出 " << endl;
+		hasError = true;
+	}
+	else
+	{
+		Ptr->entry = NULL;
+		Ptr->next = NULL;
+	}
+	return Ptr;
+}
+
 //建立空符号表table
 void SemanticAnalysis::CreatTable(void)
 {
@@ -444,7 +477,7 @@ TypeIR* SemanticAnalysis::recordType(TreeNode* t)
 		}
 		t = t->sibling;
 	}
-	
+	return Ptr;
 }
 
 //检查本层类型声明中是否有重复定义错误
@@ -650,7 +683,8 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 		case ConstK:
 			Eptr = TypeProcess(t, IntegerK);
 			Eptr->kind = intTy;
-			(*Ekind) = dir;   //直接变量
+			if (Ekind != NULL)
+				(*Ekind) = dir;   //直接变量
 			break;
 
 		//变量处理
@@ -663,10 +697,11 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 				if (tempb == true)
 				{   
 					//判断是否为间接变量
-					if (FindAttr(entry).kind == varKind)
+					if (entry->attrIR.kind == varKind)
 					{
 						Eptr = entry->attrIR.idtype;
-						*Ekind = indir;  //间接变量
+						if (Ekind != NULL)
+							*Ekind = indir;  //间接变量
 					}
 					else
 					{
@@ -712,8 +747,7 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 				return NULL;
 			}
 
-			present = Compat(op1, op2);
-			if (present != false)
+			if (op1 == op2)
 			{
 				switch (t->attr.ExpAttr.op)
 				{
@@ -741,24 +775,24 @@ TypeIR* SemanticAnalysis::Expr(TreeNode* t, AccessKind* Ekind)
 //数组变量的处理分析函数
 TypeIR* SemanticAnalysis::arrayVar(TreeNode* t)
 {
-	TypeIR* Eptr = nullptr;
-	SymbTable* entry = nullptr;
+	TypeIR* Eptr = NULL;
+	SymbTable* entry = NULL;
 	if (FindEntry(t->name[0], &entry))
 	{
 		string temp = t->name[0].c_str();
 		semanticError(t->lineno, temp + "未找到此标识符");
-		entry = nullptr;
+		entry = NULL;
 	}
 	else
 	{
-		if (FindAttr(entry).kind != varKind)
+		if (entry->attrIR.kind != varKind)
 		{
 			string temp = t->name[0].c_str();
 			semanticError(t->lineno, temp + "不是变量");
 		}
 		else
 		{
-			if (FindAttr(entry).idtype != NULL)
+			if (entry->attrIR.idtype != NULL)
 			{
 				string temp = t->name[0].c_str();
 				semanticError(t->lineno, temp + "不是数组变量");
@@ -773,7 +807,7 @@ TypeIR* SemanticAnalysis::arrayVar(TreeNode* t)
 				if (temp1 == NULL || temp2 == NULL)
 					return NULL;
 
-				if (Compat(temp1, temp2))
+				if (temp1 == temp2)
 					Eptr = entry->attrIR.idtype->More.ArrayAttr.elemTy;
 				else
 				{
@@ -789,8 +823,8 @@ TypeIR* SemanticAnalysis::arrayVar(TreeNode* t)
 //记录变量中域变量的分析处理函数
 TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 {
-	TypeIR* Eptr = nullptr;
-	SymbTable* entry = nullptr;
+	TypeIR* Eptr = NULL;
+	SymbTable* entry = NULL;
 	if (FindEntry(t->name[0], &entry) == false)
 	{
 		string temp = t->name[0].c_str();
@@ -798,14 +832,14 @@ TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 	}
 	else
 	{
-		if (FindAttr(entry).kind != varKind)
+		if (entry->attrIR.kind != varKind)
 		{
 			string temp = t->name[0].c_str();
 			semanticError(t->lineno, temp + "不是变量");
 		}
 		else
 		{
-			if (FindAttr(entry).idtype->kind != recordTy)
+			if (entry->attrIR.idtype->kind != recordTy)
 			{
 				string temp = t->name[0].c_str();
 				semanticError(t->lineno, temp + "不是变量");
@@ -833,7 +867,7 @@ TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 				else
 				{
 					//?数组变量
-					if (t->child[0]->child != nullptr)
+					if (t->child[0]->child != NULL)
 						Eptr = arrayVar(t->child[0]);
 				}
 			}
@@ -845,8 +879,8 @@ TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 //赋值语句分析
 void SemanticAnalysis::assignstatement(TreeNode* t)
 {
-	TypeIR* Eptr = nullptr;
-	SymbTable* entry = nullptr;
+	TypeIR* Eptr = NULL;
+	SymbTable* entry = NULL;
 	TreeNode* child1 = t->child[0];
 	TreeNode* child2 = t->child[1];
 
@@ -856,11 +890,11 @@ void SemanticAnalysis::assignstatement(TreeNode* t)
 		{
 			string temp = t->name[0].c_str();
 			semanticError(t->lineno, temp + "未找到此标识符");
-			entry = nullptr;
+			entry = NULL;
 		}
 		else
 		{
-			if (FindAttr(entry).kind != varKind)
+			if (entry->attrIR.kind != varKind)
 			{
 				string temp = t->name[0].c_str();
 				semanticError(t->lineno, temp + "不是变量");
@@ -883,7 +917,7 @@ void SemanticAnalysis::assignstatement(TreeNode* t)
 
 	//检查赋值号两侧是否等价
 	if (Eptr != NULL)
-		if (!Compat(Expr(child2, NULL), Eptr))
+		if (Expr(child2, NULL) != Eptr)
 			semanticError(t->lineno, "等号两侧不等价");
 }
 
@@ -901,19 +935,119 @@ void SemanticAnalysis::callstatement(TreeNode* t)
 	}
 	else
 	{
-		if (FindAttr(entry).kind != procKind)
+		if (entry->attrIR.kind != procKind)
 		{
 			string temp = t->name[0].c_str();
 			semanticError(t->lineno, temp + "不是函数名");
 		}
+		//判断形参实参对应
 		else
 		{
-			/*===============================*/
-			//形式参匹配
-			/*===============================*/
+			//参数表指针
+			ParamTable* tempTable = entry->attrIR.More.ProcAttr.param;
+			//实参指针
+			TreeNode* pNode = t->child[1];
+
+			while (tempTable != NULL && pNode != NULL)
+			{
+				AccessKind tempA;
+				TypeIR* tempT = Expr(pNode, &tempA);
+
+				if ((tempTable->entry->attrIR.More.VarAttr.access == indir) && (tempA == dir))
+					semanticError(t->lineno, "值参类型不得使用变参");
+				else
+					if ((tempTable->entry->attrIR.idtype) != tempT)
+						semanticError(t->lineno, "参数类型不匹配");
+				
+				pNode = pNode->sibling;
+				tempTable = tempTable->next;
+			}
+
+			//参数数量不匹配
+			if (tempTable != NULL || pNode != NULL)
+				semanticError(t->lineno, "参数个数不匹配");
 		}
 
 	}
+}
+
+//条件语句分析处理函数
+void SemanticAnalysis::ifstatment(TreeNode* t)
+{
+	TypeIR* Etp = Expr(t->child[0], NULL);
+
+	//条件表达式是bool型
+	if (Etp->kind != boolTy)
+		semanticError(t->lineno, "表达式非bool型");
+	else
+	{
+		//then语句
+		TreeNode* p = t->child[1];
+		while (p != NULL)
+		{
+			statement(p);
+			p = p->sibling;
+		}
+
+		//else语句
+		p = t->child[2];
+		while (p != NULL)
+		{
+			statement(p);
+			p = p->sibling;
+		}
+	}
+}
+
+//循环语句分析处理函数
+void SemanticAnalysis::whilestatement(TreeNode* t)
+{
+	TypeIR* Etp = Expr(t->child[0], NULL);
+
+	//条件表达式是bool型
+	if (Etp->kind != boolTy)
+		semanticError(t->lineno, "表达式非bool型");
+	else
+	{
+		//语句序列
+		TreeNode* p = t->child[1];
+		while (p != NULL)
+		{
+			statement(p);
+			p = p->sibling;
+		}
+	}
+}
+
+//读语句分析处理函数
+void SemanticAnalysis::readstatement(TreeNode* t)
+{
+	SymbTable* entry = NULL;
+	if (FindEntry(t->name[0], &entry) == false)
+	{
+		string temp = t->name[0].c_str();
+		semanticError(t->lineno, temp + "未找到此标识符");
+	}
+	else
+		if (entry->attrIR.kind != varKind)
+		{
+			string temp = t->name[0].c_str();
+			semanticError(t->lineno, temp + "不是变量");
+		}
+}
+
+//写语句分析处理函数
+void SemanticAnalysis::writestatement(TreeNode* t)
+{
+	TypeIR* Etp = Expr(t->child[0], NULL);
+
+	if (Etp->kind == boolTy)
+		semanticError(t->lineno, "表达式不合法");
+}
+
+void SemanticAnalysis::returnstatement(TreeNode* t)
+{
+	return;
 }
 
 
