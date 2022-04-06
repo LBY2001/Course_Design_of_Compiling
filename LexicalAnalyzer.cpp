@@ -82,7 +82,7 @@ void LexicalAnalyzer::getTokenList()
 	//文件读入
 	ifstream file;
 	string inputFile;
-	inputFile = "text.cpp";		//输入文件名
+	inputFile = "text.txt";		//输入文件名
 	file.open(inputFile);
 	if (!file)
 		cout << "文件打开失败！";

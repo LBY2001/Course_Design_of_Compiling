@@ -24,6 +24,7 @@ int indentation;	//缩进
 ofstream treeFile;	//树形文件
 FILE* listing;
 bool Error;
+bool hasTypeK;
 
 //语法树可视化使用变量
 int circleX, circleY, circleR;	//语法树图形化节点坐标x, y, 半径r
@@ -63,6 +64,7 @@ void RecursiveDescentParsing::initial()
 	procNum = 0;
 	indentation = 0;
 	stmlkNum = 2;	//值为2，但代码段为1。在函数中减为1
+	hasTypeK = false;
 }
 
 void RecursiveDescentParsing::ReadNextToken()
@@ -298,7 +300,7 @@ TreeNode* RecursiveDescentParsing::DeclarePart(void)
 	return pp;
 }
 
-//？< typeDec > ::= ε | TypeDeclaration  
+//?< typeDec > ::= ε | TypeDeclaration  
 TreeNode* RecursiveDescentParsing::TypeDec(void)
 {
 	TreeNode* t = nullptr;
@@ -358,7 +360,7 @@ TreeNode* RecursiveDescentParsing::TypeDecList(void)
 	return t;
 }
 
-//？< typeDecMore > ::=    ε | TypeDecList
+//?< typeDecMore > ::=    ε | TypeDecList
 TreeNode* RecursiveDescentParsing::TypeDecMore(void)
 {
 	TreeNode* t = nullptr;
@@ -389,7 +391,7 @@ void RecursiveDescentParsing::TypeId(TreeNode* t)
 	}
 }
 
-//？< typeName > ::= baseType | structureType | id 
+//?< typeName > ::= baseType | structureType | id 
 void RecursiveDescentParsing::TypeName(TreeNode* t)
 {
 	if (t != nullptr)
@@ -413,7 +415,7 @@ void RecursiveDescentParsing::TypeName(TreeNode* t)
 	}
 }
 
-//？< baseType > ::=  INTEGER | CHAR 
+//?< baseType > ::=  INTEGER | CHAR 
 void RecursiveDescentParsing::BaseType(TreeNode* t)
 {
 	if (t != nullptr)
@@ -437,7 +439,7 @@ void RecursiveDescentParsing::BaseType(TreeNode* t)
 	}
 }
 
-//？< structureType > ::=  arrayType | recType
+//?< structureType > ::=  arrayType | recType
 void RecursiveDescentParsing::StructureType(TreeNode* t)
 {
 	if (t != nullptr)
@@ -645,7 +647,7 @@ TreeNode* RecursiveDescentParsing::VarDecList(void)
 	return t;
 }
 
-//？< varDecMore > ::=  ε |  varDecList 
+//?< varDecMore > ::=  ε |  varDecList 
 TreeNode* RecursiveDescentParsing::VarDecMore(void)
 {
 	TreeNode* t = nullptr;
@@ -678,7 +680,7 @@ void RecursiveDescentParsing::VarIdList(TreeNode* t)
 	VarIdMore(t);
 }
 
-//？< varIdMore > ::=  ε |  , varIdList 
+//?< varIdMore > ::=  ε |  , varIdList 
 void RecursiveDescentParsing::VarIdMore(TreeNode* t)
 {
 	if (token.word.Lex == SEMI){}
@@ -695,7 +697,7 @@ void RecursiveDescentParsing::VarIdMore(TreeNode* t)
 	}
 }
 
-//？< procDec > ::=  ε |  procDeclaration
+//?< procDec > ::=  ε |  procDeclaration
 TreeNode* RecursiveDescentParsing::ProcDec(void)
 {
 	TreeNode* t = nullptr;
@@ -780,7 +782,7 @@ TreeNode* RecursiveDescentParsing::ParamDecList(void)
 	return t;
 }
 
-//？< paramMore > ::=  ε | ; paramDecList 
+//?< paramMore > ::=  ε | ; paramDecList 
 TreeNode* RecursiveDescentParsing::ParamMore(void)
 {
 	TreeNode* t = nullptr;
@@ -801,7 +803,7 @@ TreeNode* RecursiveDescentParsing::ParamMore(void)
 	return t;
 }
 
-//？< param > ::=  typeName formList | VAR typeName formList
+//?< param > ::=  typeName formList | VAR typeName formList
 TreeNode* RecursiveDescentParsing::Param(void)
 {
 	TreeNode* t = new TreeNode;
@@ -1009,11 +1011,11 @@ TreeNode* RecursiveDescentParsing::StmList(void)
 	return t;
 }
 
-//?< stmMore > ::=   ε |  ; stmList  ???END,ENDWH,FI,ELSE
+//?< stmMore > ::=   ε |  ; stmList 
 TreeNode* RecursiveDescentParsing::StmMore(void)
 {
 	TreeNode* t = nullptr;
-	if (token.word.Lex == END || token.word.Lex == ENDWH){}
+	if (token.word.Lex == FI || token.word.Lex == ELSE || token.word.Lex == END || token.word.Lex == ENDWH){}
 	else if (token.word.Lex == SEMI)
 	{
 		match(SEMI);
@@ -1059,11 +1061,11 @@ TreeNode* RecursiveDescentParsing::Stm(void)
 	return t;
 }
 
-//？< assCall > ::=   assignmentRest  {:=,LMIDPAREN,DOT}  | callStmRest  {(}   ???LMIDPAREN,DOT
+//?< assCall > ::=   assignmentRest  {:=,LMIDPAREN,DOT}  | callStmRest  {(} 
 TreeNode* RecursiveDescentParsing::AssCall(void)
 {
 	TreeNode* t = nullptr;
-	if (token.word.Lex == ASSIGN)
+	if (token.word.Lex == ASSIGN || token.word.Lex == DOT || token.word.Lex == LMIDPAREN)
 		t = AssignmentRest();
 	else if (token.word.Lex == LPAREN)
 		t = CallStmRest();
@@ -1358,7 +1360,7 @@ TreeNode* RecursiveDescentParsing::ActParamList(void)
 {
 	TreeNode* t = nullptr;
 	if (token.word.Lex == RPAREN) {}
-	else if (token.word.Lex == ID || token.word.Lex == INTC)
+	else if (token.word.Lex == ID || token.word.Lex == INTC || token.word.Lex == LPAREN)
 	{
 		t = Exp();
 		if (t != nullptr)
@@ -1431,7 +1433,6 @@ TreeNode* RecursiveDescentParsing::Exp(void)
 	return t;
 }
 
-//？< simple_exp > ::= term | PlusOp term
 TreeNode* RecursiveDescentParsing::Simple_exp(void)
 {
 	TreeNode* t = Term();
@@ -1593,7 +1594,7 @@ TreeNode* RecursiveDescentParsing::Variable(void)
 	return t;
 }
 
-//？variMore   ::=  ε                             			
+//?variMore   ::=  ε                             			
 //                | [exp]                          
 //                | . fieldvar                 
 void RecursiveDescentParsing::VariMore(TreeNode* t)
@@ -1686,8 +1687,8 @@ void RecursiveDescentParsing::FieldvarMore(TreeNode* t)
 void RecursiveDescentParsing::printTree(TreeNode* tree)
 {
 	//fopen_s(&listing, "treeFile.txt", "w");
-	if (Error == false)
-	{
+	//if (Error == false)
+	//{
 		indentation += 4;		//缩进加4
 
 		while (tree != nullptr)
@@ -2054,6 +2055,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 					line(circleX, circleY - 40, 610, 50);
 					lastNode = tree->nodekind;
 					lastIsDeck = false;
+					hasTypeK = true;
 				}
 					break;
 
@@ -2067,7 +2069,10 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 					circleX = 450, circleY = 150, circleR = 40;
 					circle(circleX, circleY, circleR); // 画圆
 					outtextxy(circleX - 20, circleY - 10, temp);// 文字
-					line(circleX - 40, circleY, 290, 150);
+					if(hasTypeK == true)
+						line(circleX - 40, circleY, 290, 150);
+					else
+						line(circleX, circleY - 40, 610, 50);
 					lastNode = tree->nodekind;
 					lastIsDeck = false;
 				}					
@@ -2097,8 +2102,6 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 						circleX = 250, circleY = 550, circleR = 40;
 						circle(circleX, circleY, circleR); // 画圆
 						outtextxy(circleX - 30, circleY - 10, temp);// 文字
-						_stprintf_s(temp, _T("%s"), tree->name[0].c_str());
-						outtextxy(circleX - 10, circleY + 7, temp);
 						line(circleX, circleY - 40, 650, 190);
 						lastX = circleX + 40;
 						lastY = circleY;
@@ -2110,8 +2113,6 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 						circleX = lastX + 60, circleY = lastY, circleR = 40;
 						circle(circleX, circleY, circleR); // 画圆
 						outtextxy(circleX - 30, circleY - 10, temp);// 文字
-						_stprintf_s(temp, _T("%s"), tree->name[0].c_str());
-						outtextxy(circleX - 10, circleY + 7, temp);
 						line(circleX - 40, circleY, lastX, lastY);
 						lastX = circleX + 40;
 						lastY = circleY;
@@ -2210,7 +2211,7 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 							break;
 
 						case CallK:
-							treeFile << "Call  "; break;
+							treeFile << "Call  ";
 							treeFile << tree->name[0] << "  ";
 							_stprintf_s(temp, _T("Call"));
 							if (stmlkNum == 1)
@@ -2327,8 +2328,8 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 			tree = tree->sibling;
 		}
 		indentation -= 4;		//缩进减4
-	}
-	else
-		treeFile << "存在语法错误，语法树生成失败!";
+	//}
+	//else
+	//	treeFile << "存在语法错误，语法树生成失败!";
 	//fclose(listing);
 }
