@@ -99,8 +99,8 @@ void RecursiveDescentParsing::match(LexType lt)
 {
 	if (token.word.Lex == lt)
 	{
-		if (lt != DOT)
-			ReadNextToken();
+		//对EOF未进行处理
+		ReadNextToken();
 		line0 = token.lineShow;
 	}
 	else
@@ -329,6 +329,7 @@ TreeNode* RecursiveDescentParsing::TypeDeclaration(void)
 
 TreeNode* RecursiveDescentParsing::TypeDecList(void)
 {
+	//newDecNode()
 	TreeNode* t = new TreeNode;
 	if (t == nullptr)
 		syntaxError("内存溢出");
@@ -353,6 +354,22 @@ TreeNode* RecursiveDescentParsing::TypeDecList(void)
 		match(EQ);
 		TypeName(t);
 		match(SEMI);
+		
+		/*
+		//结构体变量数目放在第一个变量的idnum里
+		//！！！！！！
+		if (t->kind.dec == RecordK && t->child[0] != NULL)
+		{
+			TreeNode* temp = t->child[0];
+			int tempIdnum = 0;
+			while (temp != nullptr)
+			{
+				tempIdnum += temp->idnum;
+				temp = temp->sibling;
+			}
+			t->child[0]->idnum = tempIdnum;
+		}*/
+
 		TreeNode* p = TypeDecMore();
 		if (p != nullptr)
 			t->sibling = p;

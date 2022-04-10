@@ -1,12 +1,14 @@
 ==========第0层符号表==========
-i:  intTy  varKind  Level: 0  Offset: 7  indir  
-j:  intTy  varKind  Level: 0  Offset: 8  indir  
-num:  intTy  varKind  Level: 0  Offset: 9  indir  
-a:  arrayTy  varKind  Level: 0  Offset: 10  indir  
-q:  funcKind  Level: 1  nOff: -842150656  
+w1:  intTy  typeKind  
+w2:  recordTy  typeKind  
+w3:  arrayTy  typeKind  
+p:  intTy  varKind  Level: 0  Offset: 7  indir  
+c:  arrayTy  varKind  Level: 0  Offset: 8  indir  
+d:  recordTy  varKind  Level: 0  Offset: 9  indir  
+a:  intTy  varKind  Level: 0  Offset: 10  indir  
+sd:  funcKind  Level: 1  nOff: -842150656  
 ==========第1层符号表==========
-num:  intTy  varKind  Level: 1  Offset: 7  dir  
-i:  intTy  varKind  Level: 1  Offset: 8  indir  
-j:  intTy  varKind  Level: 1  Offset: 9  indir  
-k:  intTy  varKind  Level: 1  Offset: 10  indir  
-t:  intTy  varKind  Level: 1  Offset: 11  indir  
+s1:  intTy  varKind  Level: 1  Offset: 7  dir  
+s2:  intTy  varKind  Level: 1  Offset: 8  indir  
+x:  intTy  varKind  Level: 1  Offset: 9  indir  
+y:  intTy  varKind  Level: 1  Offset: 10  indir  

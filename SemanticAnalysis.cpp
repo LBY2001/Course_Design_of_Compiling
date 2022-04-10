@@ -478,6 +478,8 @@ TypeIR* SemanticAnalysis::recordType(TreeNode* t)
 		}
 		t = t->sibling;
 	}
+
+	Ptr->More.body = pTemp;
 	return Ptr;
 }
 
@@ -663,12 +665,17 @@ ParamTable* SemanticAnalysis::ParaDecList(TreeNode* t)
 
 void SemanticAnalysis::Body(TreeNode* t)
 {
-	TreeNode* p = t->child[0];
-	while (p != NULL)
+	TreeNode* p;
+	if (t != NULL)
 	{
-		statement(p);
-		p = p->sibling;
+		p = t->child[0];
+		while (p != NULL)
+		{
+			statement(p);
+			p = p->sibling;
+		}
 	}
+
 }
 
 void SemanticAnalysis::statement(TreeNode* t)
@@ -886,7 +893,10 @@ TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 					if (t->child[0]->name[0] != tempF->id)
 						tempF = tempF->Next;
 					else
+					{
 						Eptr = tempF->UnitType;
+						break;
+					}
 				}
 
 				
@@ -898,7 +908,7 @@ TypeIR* SemanticAnalysis::recordVar(TreeNode* t)
 				else
 				{
 					//?数组变量
-					if (t->child[0]->child != NULL)
+					if (t->child[0]->child[0] != NULL)
 						Eptr = arrayVar(t->child[0]);
 				}
 			}
@@ -1014,6 +1024,9 @@ void SemanticAnalysis::ifstatment(TreeNode* t)
 {
 	TypeIR* Etp = Expr(t->child[0], NULL);
 
+	if (Etp == NULL)
+		return;
+
 	//条件表达式是bool型
 	if (Etp->kind != boolTy)
 		semanticError(t->lineno, "表达式非bool型");
@@ -1041,6 +1054,9 @@ void SemanticAnalysis::ifstatment(TreeNode* t)
 void SemanticAnalysis::whilestatement(TreeNode* t)
 {
 	TypeIR* Etp = Expr(t->child[0], NULL);
+
+	if (Etp == NULL)
+		return;
 
 	//条件表达式是bool型
 	if (Etp->kind != boolTy)

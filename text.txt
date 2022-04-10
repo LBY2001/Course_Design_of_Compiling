@@ -1,42 +1,39 @@
-program bubble 
-var integer i,j,num;
-array [1..20] of integer a;
+program  example
+type w1=integer;
+     w2=record
+          integer  x;
+          char     y,z,m;
+        end;
+     w3=array [3..6] of integer;  {haha}
 
-procedure q(integer num); 
+var integer p;
+     w3 c;
+     w2 d;
+    integer a;
 
-var integer i,j ,k;
-integer t;
-begin 
-  i:=1;
-  while i < num do 
-  j := num-i+ 1; 
-  k:=1; 
-  while k<j do 
-  if a[k+ 1] < a[k] 
-  then 
-  t:=a[k ]; 
-  a[k] :=a[k+ 1 ];
-  a[k+ 1 ]:=t 
-  else t:=0
-  fi; 
-  k:=k+ 1 
-  endwh;
-  i:=i+1
-  endwh 
-end 
+procedure sd(integer s1;var integer s2); 
+var integer  x,y;
+procedure sd1(integer y);
+begin
+   write(y)
+end
+begin
+   if a=2
+   then x:=s1*(5+7)+10
+   else 
+	x:=s1/9;
+	sd1(x)
+  fi;
+   return
+end
 
-begin 
-read(num);
-i:=1; 
-while i <(num+ 1) do 
-read(j); 
-a[i]:=j; 
-i:=i+1
-endwh;
-q(num);
-i:=1; 
-while i <(num+ 1) do 
-write(a[i]); 
-i:=i+1
-endwh 
-end. 
+begin      
+   while a<5
+   do 
+   sd(2,a);
+   c[3]:=a*2;
+   c[a]:=d.x;
+   read(p)      
+   endwh    
+  
+end.
