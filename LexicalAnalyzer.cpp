@@ -316,4 +316,5 @@ void LexicalAnalyzer::getTokenList()
 	string temp(1, c);
 	Token* tempToken = new Token(lineShow, Word(temp, ENDFILE1));
 	TokenList.push_back(tempToken);
+	file.close();
 }

@@ -121,6 +121,10 @@ public:
 	void fileClose();
 	void printTree(TreeNode* tree);
 
+	//debug
+	void out_SynTree(TreeNode* p, int level);	
+	string printTreenode(TreeNode* p);
+
 	//1
 	TreeNode* parse(void);
 	TreeNode* Program(void);

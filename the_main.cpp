@@ -54,6 +54,8 @@ int main()
 		rd.printTree(root);
 		saveimage(_T("treeFile.bmp"));
 	}
+	//rd.out_SynTree(root, 0);
+
 	closegraph();
 	rd.fileClose();
 

@@ -2350,3 +2350,147 @@ void RecursiveDescentParsing::printTree(TreeNode* tree)
 	//	treeFile << "´æÔÚÓï·¨´íÎó£¬Óï·¨Ê÷Éú³ÉÊ§°Ü!";
 	//fclose(listing);
 }
+
+
+//unordered_map <DecKind, string>arrayString = {
+//	{ArrayK,"ArrayK"},
+//	{CharK,"CharK"},
+//	{IntegerK,"IntegerK"},
+//	{RecordK,"RecordK"},
+//	{IdK,"IdK"}
+//};
+//
+//void RecursiveDescentParsing::out_SynTree(TreeNode* p, int level)
+//{
+//	//cout << level << endl;
+//	if (p != NULL)
+//	{
+//		string res = printTreenode(p);
+//		for (int i = 0; i < level; i++)
+//			cout << "  ";
+//
+//		cout << res << endl;
+//		level++;
+//		for (int i = 0; i < 3; i++)
+//		{
+//			if (p->child[i] != NULL)
+//			{
+//				out_SynTree(p->child[i], level);
+//				auto ch = p->child[i];
+//				while (ch->sibling != NULL)
+//				{
+//					out_SynTree(ch->sibling, level);
+//					ch = ch->sibling;
+//				}
+//			}
+//		}
+//	}
+//}
+//
+//string RecursiveDescentParsing::printTreenode(TreeNode* p)
+//{
+//	string res;
+//	switch (p->nodekind)
+//	{
+//	case ProK: res = "ProK"; break;
+//	case PheadK:res = "PheadK  " + string(p->name[0]);
+//		break;
+//		//ArrayK, CHARCK, IntegerK, RecordK, IdK
+//	case DecK:
+//	{
+//		switch (p->kind.dec)
+//		{
+//		case ArrayK:
+//		{
+//			res = "DecK ArrayK  " + string(p->name[0]) + "of" + arrayString[p->attr.ArrayAttr.childtype]
+//				+ "from" + to_string(p->attr.ArrayAttr.low) + "to" + to_string(p->attr.ArrayAttr.up);
+//			break;
+//		}
+//		case CharK:res = "DecK CharK  " + string(p->name[0]); break;
+//		case IntegerK:
+//		{
+//			string ans;
+//			for (int i = 0; i < p->idnum; i++)
+//			{
+//				ans += p->name[i];
+//				if (i + 1 != p->idnum)
+//					ans.append(1, ' ');
+//			}
+//			res = "DecK IntegerK  " + ans;
+//			break;
+//		}
+//		case RecordK:
+//		{
+//			string ans;
+//			for (int i = 0; i < p->idnum; i++)
+//			{
+//				ans += p->name[i];
+//				if (i + 1 != p->idnum)
+//					ans.append(1, ',');
+//			}
+//			res = "DecK RecordK:" + ans;
+//			break;
+//		}
+//		case IdK:
+//		{
+//			string ans;
+//			for (int i = 0; i < p->idnum; i++)
+//			{
+//				ans += p->name[i];
+//				if (i + 1 != p->idnum)
+//					ans.append(1, ',');
+//			}
+//			res = "DecK IdK:" + ans + p->name[0];
+//			break;
+//		}
+//		}
+//		break;
+//	}
+//	case TypeK:res = "TypeK"; break;
+//	case VarK:res = "VarK"; break;
+//	case ProcDecK:
+//	{
+//		string an;
+//		ParamType ans = p->attr.ProcAttr.paramt;
+//		if (ans == valparamType)an = "valparamType";
+//		else an = "varparamType";
+//		res = "ProcDecK" + '  ' + string(p->name[0] + "of Type" + an);
+//		break;
+//	}
+//	case StmLK:res = "StmLK"; break;
+//		//IfK, WhileK, AssignK, ReadK, WriteK, CallK, RETURN1K
+//	case StmtK:
+//	{
+//		res = "StmtK  ";
+//		switch (p->kind.stmt)
+//		{
+//		case IfK:res += "IfK"; break;
+//		case WhileK:res += "WhileK"; break;
+//		case AssignK:res += "Assign";
+//			cout << "StmtK Assign" << endl; break;
+//		case ReadK:res += "Read  " + string(p->name[0]); break;
+//		case WriteK:res += "WriteK"; break;
+//		case CallK:res += "Call"; break;
+//		case ReturnK:res += "ReturnK"; break;
+//		default:
+//			break;
+//		}
+//	}
+//	//OpK, ConstK, VariK
+//	case ExpK:
+//	{
+//		switch (p->kind.exp)
+//		{
+//		case OpK:res = "ExpK OpK:" ; break;
+//		case ConstK:res = "ExpK ConstK:" + to_string(p->attr.ExpAttr.val); break;
+//		case VariK:res = "ExpK " + p->name[0]; break;
+//		default:
+//			break;
+//		}
+//		break;
+//	}
+//	default:
+//		res = "ERROR"; break;
+//	}
+//	return res;
+//}

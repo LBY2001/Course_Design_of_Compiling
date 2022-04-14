@@ -145,7 +145,7 @@ void SemanticAnalysis::DestroyTable()
 	scopeLevel--;
 }
 
-//登记
+//查找单层符号表并登记
 bool SemanticAnalysis::Enter(string id, AttributeIR* attribP, SymbTable** entry)
 {
 	bool present = false;
@@ -575,7 +575,7 @@ void SemanticAnalysis::procDecPart(TreeNode* t)
 				varDecList(t->child[0]);
 				break;
 			case  ProcDecK: 
-				procDecPart(t->child[0]);
+				procDecPart(t);
 				break;
 			default:
 				semanticError(t->lineno, "声明类型异常");
@@ -618,19 +618,16 @@ ParamTable* SemanticAnalysis::ParaDecList(TreeNode* t)
 {
 	TreeNode* p = NULL;
 	ParamTable* result = NULL;
+
+	//不管是不是无参数列表，都进入新局部化区，以便于新函数声明变量
+	CreatTable();
 	if (t->child[0] != NULL)
 	{
 		p = t->child[0];
 
-		//进入新局部化区
-		CreatTable();
-
 		//调用函数varDecPart
 		varDecList(p);
 
-		//?需要循环吗
-		 
-		
 		//构造形参符号表
 		SymbTable* temp = scope[scopeLevel];
 		ParamTable* Pcurrent = NULL;//符号表
@@ -987,33 +984,38 @@ void SemanticAnalysis::callstatement(TreeNode* t)
 		//参数表指针
 		else
 		{
-			//参数表指针
-			SymbTable* paraEntry = tempTable->entry;
-
-			//实参指针
-			TreeNode* pNode = t->child[1];
-
-			while ((paraEntry != NULL && paraEntry->attrIR.More.VarAttr.isParam != false) && pNode != NULL)
+			//先判断函数有没有参数
+			if (tempTable != NULL)
 			{
-				AccessKind tempA;
-				TypeIR* tempT = Expr(pNode, &tempA);
+				//参数表指针
+				SymbTable* paraEntry = tempTable->entry;
 
-				if ((tempTable->entry->attrIR.More.VarAttr.access == indir) && (tempA == dir))
-					semanticError(t->lineno, "值参类型不得使用变参");
-				else
-					if ((tempTable->entry->attrIR.idtype) != tempT)
-						semanticError(t->lineno, "参数类型不匹配");
+				//实参指针
+				TreeNode* pNode = t->child[1];
+
+				while ((paraEntry != NULL && paraEntry->attrIR.More.VarAttr.isParam != false) && pNode != NULL)
+				{
+					AccessKind tempA;
+					TypeIR* tempT = Expr(pNode, &tempA);
+
+					if ((tempTable->entry->attrIR.More.VarAttr.access == indir) && (tempA == dir))
+						semanticError(t->lineno, "值参类型不得使用变参");
+					else
+						if ((tempTable->entry->attrIR.idtype) != tempT)
+							semanticError(t->lineno, "参数类型不匹配");
 				
-				pNode = pNode->sibling;
-				paraEntry = paraEntry->next;
+					pNode = pNode->sibling;
+					paraEntry = paraEntry->next;
+				}
+
+				//参数数量不匹配
+				if (pNode != NULL)
+					semanticError(t->lineno, "参数个数不匹配");
+
+				if(paraEntry != NULL && paraEntry->attrIR.More.VarAttr.isParam != false)
+					semanticError(t->lineno, "参数个数不匹配");
 			}
-
-			//参数数量不匹配
-			if (pNode != NULL)
-				semanticError(t->lineno, "参数个数不匹配");
-
-			if(paraEntry != NULL && paraEntry->attrIR.More.VarAttr.isParam != false)
-				semanticError(t->lineno, "参数个数不匹配");
+			
 		}
 
 	}
