@@ -1,9 +1,0 @@
-语法错误, line 4 : 符号"ools\MSVC\14.29.30133\include\xlocale"错误，也许缺失符号"ID"
-语法错误, line 4 : 意外符号"ools\MSVC\14.29.30133\include\xlocale"，或许缺少符号“TYPE” / “VAR” / “PROCEDURE” / “BEGIN”
-语法错误, line 4 : 意外符号"ools\MSVC\14.29.30133\include\xlocale"，或许缺少符号“PROCEDURE” / “BEGIN” / “VAR”
-语法错误, line 4 : 意外符号"ools\MSVC\14.29.30133\include\xlocale"，或许缺少符号“PROCEDURE” / “BEGIN”
-语法错误, line 4 : 符号"ools\MSVC\14.29.30133\include\xlocale"错误，也许缺失符号"BEGIN"
-语法错误, line 4 : 意外符号"ools\MSVC\14.29.30133\include\xlocale"
-语法错误, line 4 : 意外符号"ools\MSVC\14.29.30133\include\xlocale"，或许缺少符号“；”/ “END” / “ENDWH”
-语法错误, line 4 : 符号"ools\MSVC\14.29.30133\include\xlocale"错误，也许缺失符号"END"
-语法错误, line 4 : 符号"ools\MSVC\14.29.30133\include\xlocale"错误，也许缺失符号"DOT"

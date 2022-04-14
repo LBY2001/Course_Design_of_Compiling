@@ -1,3 +1,109 @@
              ProK  
-line: 4           PheadK    
+                 PheadK  bubble  
+                 VarK  
+line: 2               Deck  Integer  i  j  num    
+line: 3               Deck  ArrayK  20  1  Integer  a    
+line: 5           ProcDecK  q  
+line: 5               Deck  value param:  Integer  num    
+                     VarK  
+line: 7                   Deck  Integer  i  j  k    
+line: 8                   Deck  Integer  t    
+                     StmLk  
+line: 10                  Stmtk  Assign  
+line: 10                      ExpK  Vari  Id  i  
+line: 10                      ExpK  Const  Id    1  
+line: 11                  Stmtk  While  
+line: 11                      ExpK  Op  <  
+line: 11                          ExpK  Vari  Id  i  
+line: 11                          ExpK  Vari  Id  num  
+line: 12                      Stmtk  Assign  
+line: 12                          ExpK  Vari  Id  j  
+line: 12                          ExpK  Op  +  
+line: 12                              ExpK  Op  -  
+line: 12                                  ExpK  Vari  Id  num  
+line: 12                                  ExpK  Vari  Id  i  
+line: 12                              ExpK  Const  Id    1  
+line: 13                      Stmtk  Assign  
+line: 13                          ExpK  Vari  Id  k  
+line: 13                          ExpK  Const  Id    1  
+line: 14                      Stmtk  While  
+line: 14                          ExpK  Op  <  
+line: 14                              ExpK  Vari  Id  k  
+line: 14                              ExpK  Vari  Id  j  
+line: 15                          Stmtk  If  
+line: 15                              ExpK  Op  <  
+line: 15                                  ExpK  Vari  ArrayMember  a  
+line: 15                                      ExpK  Op  +  
+line: 15                                          ExpK  Vari  Id  k  
+line: 15                                          ExpK  Const  Id    1  
+line: 15                                  ExpK  Vari  ArrayMember  a  
+line: 15                                      ExpK  Vari  Id  k  
+line: 17                              Stmtk  Assign  
+line: 17                                  ExpK  Vari  Id  t  
+line: 17                                  ExpK  Vari  ArrayMember  a  
+line: 17                                      ExpK  Vari  Id  k  
+line: 18                              Stmtk  Assign  
+line: 18                                  ExpK  Vari  ArrayMember  a  
+line: 18                                      ExpK  Vari  Id  k  
+line: 18                                  ExpK  Vari  ArrayMember  a  
+line: 18                                      ExpK  Op  +  
+line: 18                                          ExpK  Vari  Id  k  
+line: 18                                          ExpK  Const  Id    1  
+line: 19                              Stmtk  Assign  
+line: 19                                  ExpK  Vari  ArrayMember  a  
+line: 19                                      ExpK  Op  +  
+line: 19                                          ExpK  Vari  Id  k  
+line: 19                                          ExpK  Const  Id    1  
+line: 19                                  ExpK  Vari  Id  t  
+line: 20                              Stmtk  Assign  
+line: 20                                  ExpK  Vari  Id  t  
+line: 20                                  ExpK  Const  Id    0  
+line: 22                          Stmtk  Assign  
+line: 22                              ExpK  Vari  Id  k  
+line: 22                              ExpK  Op  +  
+line: 22                                  ExpK  Vari  Id  k  
+line: 22                                  ExpK  Const  Id    1  
+line: 24                      Stmtk  Assign  
+line: 24                          ExpK  Vari  Id  i  
+line: 24                          ExpK  Op  +  
+line: 24                              ExpK  Vari  Id  i  
+line: 24                              ExpK  Const  Id    1  
                  StmLk  
+line: 29              Stmtk  Read  num  
+line: 30              Stmtk  Assign  
+line: 30                  ExpK  Vari  Id  i  
+line: 30                  ExpK  Const  Id    1  
+line: 31              Stmtk  While  
+line: 31                  ExpK  Op  <  
+line: 31                      ExpK  Vari  Id  i  
+line: 31                      ExpK  Vari  Id  num  
+line: 32                  Stmtk  Read  j  
+line: 33                  Stmtk  Assign  
+line: 33                      ExpK  Vari  ArrayMember  a  
+line: 33                          ExpK  Vari  Id  i  
+line: 33                      ExpK  Vari  Id  j  
+line: 34                  Stmtk  Assign  
+line: 34                      ExpK  Vari  Id  i  
+line: 34                      ExpK  Op  +  
+line: 34                          ExpK  Vari  Id  i  
+line: 34                          ExpK  Const  Id    1  
+line: 36              Stmtk  Call    
+line: 36                  ExpK  Vari  Id  i  
+line: 36                  ExpK  Vari  Id  num  
+line: 37              Stmtk  Assign  
+line: 37                  ExpK  Vari  Id  i  
+line: 37                  ExpK  Const  Id    1  
+line: 38              Stmtk  While  
+line: 38                  ExpK  Op  <  
+line: 38                      ExpK  Vari  Id  i  
+line: 38                      ExpK  Op  +  
+line: 38                          ExpK  Vari  Id  num  
+line: 38                          ExpK  Const  Id    1  
+line: 39                  Stmtk  Write  
+line: 39                      ExpK  Vari  ArrayMember  a  
+line: 39                          ExpK  Vari  Id  i  
+line: 40                  Stmtk  Assign  
+line: 40                      ExpK  Vari  Id  i  
+line: 40                      ExpK  Op  +  
+line: 40                          ExpK  Vari  Id  i  
+line: 40                          ExpK  Const  Id    1  

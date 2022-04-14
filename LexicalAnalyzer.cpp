@@ -30,7 +30,7 @@ unordered_map<int, string> ha =
 	{4, "TYPE"},		{5, "VAR"},			{6, "IF"},			{7, "THEN"},
 	{8, "ELSE"},		{9, "FI"},			{10, "WHILE"},		{11, "DO"},
 	{12, "ENDWH"},		{13, "BEGIN"},		{14, "END"},		{15, "READ"},
-	{16, "WRITE"},		{11, "ARRAY"},		{12, "OF"},			{13, "RECORD"},
+	{16, "WRITE"},		{17, "ARRAY"},		{18, "OF"},			{19, "RECORD"},
 	{20, "RETURN"},		{21, "INTEGER"},	{22, "CHAR1"},		{23, "ID"},
 	{24, "INTC"},		{25, "CHARC"},		{26, "ASSIGN"},		{27, "EQ"},
 	{28, "LT"},			{29, "PLUS"},		{30, "MINUS"},		{31, "TIMES"},

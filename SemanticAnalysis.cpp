@@ -427,7 +427,7 @@ TypeIR* SemanticAnalysis::arrayType(TreeNode* t)
 	TypeIR* present = NULL;
 	if (t->attr.ArrayAttr.low > t->attr.ArrayAttr.up)
 	{
-		semanticError(t->lineno, "数组越界");
+		semanticError(t->lineno, "数组上下界定义错误");
 		hasError = true;
 	}
 	else
@@ -837,13 +837,26 @@ TypeIR* SemanticAnalysis::arrayVar(TreeNode* t)
 				//数组下标类型
 				TypeIR* temp1 = NULL;
 				TypeIR* temp2 = NULL;
+				AccessKind tempA;
 				temp1 = entry->attrIR.idtype->More.ArrayAttr.indexTy;
-				temp2 = Expr(t->child[0], NULL);
+				temp2 = Expr(t->child[0], &tempA);
 				if (temp1 == NULL || temp2 == NULL)
 					return NULL;
 
+				//判断类型后，判断数组是否越界
 				if (temp1 == temp2)
+				{
 					Eptr = entry->attrIR.idtype->More.ArrayAttr.elemTy;
+
+					if (temp1->kind == intTy)
+					{
+						if (t->child[0]->attr.ExpAttr.val != -842150451)
+							if (t->child[0]->attr.ExpAttr.val < entry->attrIR.idtype->More.ArrayAttr.low ||
+								t->child[0]->attr.ExpAttr.val > entry->attrIR.idtype->More.ArrayAttr.up)
+								semanticError(t->lineno, "数组值参下标越界");
+					}	
+				}
+
 				else
 				{
 					string temp = t->name[0].c_str();
